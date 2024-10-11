@@ -1,0 +1,89 @@
+<div ng-controller="patientController as patientCtrl">
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-light">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <div class="text-center mb-4 mt-5" ng-repeat="detail in patientCtrl.details">
+                        <h5 class="text-dark">{{detail.name}}</h5>
+                        <p class="text-muted">Patient ID: {{detail.id}}</p>
+                    </div>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu" ng-repeat="nav in patientCtrl.navs">
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link px-0 align-middle text-dark">
+                                <span class="ms-1 d-none d-sm-inline">{{nav.title}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col py-3">
+                <h2 ng-repeat="detail in patientCtrl.details">Welcome, {{detail.first_name}}</h2>
+                <p>Here's your health overview:</p>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <h5 class="card-title">Upcoming Appointment</h5>
+                                <p class="card-text">Dr. John</p>
+                                <p class="card-text">May 15, 2023 at 10:00 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <h5 class="card-title">Recent Test Results</h5>
+                                <p class="card-text">Blood Test</p>
+                                <p class="card-text">Completed: May 1, 2023</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <h5 class="card-title">Prescriptions</h5>
+                                <p class="card-text">2 Active Medications</p>
+                                <p class="card-text">1 Renewal Needed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-3">
+                        <h4>Recent Activities</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item">Appointment with Dr. Sim - May 5, 2023</li>
+                            <li class="list-group-item">Prescription Refill - May 3, 2023</li>
+                            <li class="list-group-item">Lab Test Results Uploaded - May 1, 2023</li>
+                        </ul>
+                    </div>
+                    <!-- <div class="col-md-6 mb-3">
+                        <h4>Health Reminders</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item">Schedule annual check-up</li>
+                            <li class="list-group-item">Renew prescription for Medication A</li>
+                            <li class="list-group-item">Update emergency contact information</li>
+                        </ul>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <form id="categoryForm" name="addCategoryForm" ng-submit="categCtrl.addCategory()" enctype="multipart/form-data">
+    <div class="form-group mb-2">
+        <label for="category-name">Name:</label>
+        <input type="text" class="form-control" id="category-name" ng-model="categCtrl.newCategory.name" required>
+    </div>
+    <div class="form-group mb-2">
+        <label for="category-description">Description:</label>
+        <textarea class="form-control" id="category-description" ng-model="categCtrl.newCategory.description" required></textarea>
+    </div>
+    <div class="form-group mb-2">
+        <label for="category-image">Image:</label>
+        <input type="file" class="form-control" id="category-image" accept="image/*" onchange="angular.element(this).scope().categCtrl.img(this)" required>
+    </div>
+    <button type="submit" class="btn text-white" style="background-color: #8968CD;">Add</button>
+</form> -->
+
