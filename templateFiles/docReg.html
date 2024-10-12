@@ -24,15 +24,15 @@
                 <label for="phone" class="form-label">Phone Number</label>
                 <input type="text" class="form-control" id="phone" ng-model="docRegCtrl.number" autocomplete="on" required pattern="[6 7 8 9][0-9]{9}">
               </div>
-              <div class="col-sm-4 mb-2">
+              <div class="col-sm-6 mb-2">
                 <label for="exp" class="form-label ">Years Of Experience</label>
                 <input type="number" class="form-control" autocomplete="on" ng-model="docRegCtrl.exp" id="exp" min="1">
               </div>
-              <div class="col-sm-4 mb-2">
+              <div class="col-sm-3 mb-2">
                 <label for="age" class="form-label">Age</label>
                 <input type="number" maxlength="3" required autocomplete="on" ng-model="docRegCtrl.age" class="form-control" id="age" min="19">
               </div>  
-              <div class="col-sm-4 mb-2">
+              <div class="col-sm-3 mb-2">
                 <label for="gender" class="form-label">Gender</label>
                 <select class="form-select form-control" required ng-model="docRegCtrl.gender" id="gender">
                   <option value="" disabled selected>Select...</option>
@@ -41,16 +41,19 @@
                   <option>Other</option>
                 </select>
               </div>
-              <div class="col-sm-4 mb-2">
+              <div class="col-sm-3 mb-2">
                 <label for="qualify" class="form-label">Qualification</label>
                 <input type="text" class="form-control" id="qualify" pattern="[a-zA-Z]+" ng-model="docRegCtrl.qualify" required autocomplete="on">
               </div>
-              <div class="col-sm-5 mb-2">
+              <div class="col-sm-4 mb-2">
                 <label for="specialist" class="form-label">Specialist</label>
-                <input type="text" class="form-control" id="specialist" pattern="[a-zA-Z]+" ng-model="docRegCtrl.specialist" required autocomplete="on" >
+                <select class="form-select form-control" required ng-model="docRegCtrl.specialist" id="specialist">
+                  <option value="" disabled selected>Select...</option>
+                  <option ng-repeat="specialist in docRegCtrl.specialists" value="{{specialist.name}}">{{specialist.name}}</option>
+                </select>
               </div>
-              <div class="col-sm-3 mb-2">
-                <label for="fee" class="form-label">Consultation Fee (Rs)</label>
+              <div class="col-sm-5 mb-2">
+                <label for="fee" class="form-label">Consult Fee (Rs)</label>
                 <input type="number" class="form-control" id="fee" ng-model="docRegCtrl.fee" required autocomplete="on" maxlength="4" >
               </div>
               <div class="col-sm-6">
