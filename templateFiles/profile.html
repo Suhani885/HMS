@@ -1,0 +1,105 @@
+<div ng-controller="profileController as profileCtrl">
+    <div class="container-fluid py-5">
+        <h1 class="display-6 mb-4">My Profile</h1>
+        <div class="row" ng-repeat="user in profileCtrl.users">
+            <div class="col-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="bg-light p-4 rounded-3 h-100">
+                                    <h6 class="text-muted mb-2">Name</h6>
+                                    <p class="h5 mb-0">{{user.name}}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light p-4 rounded-3 h-100">
+                                    <h6 class="text-muted mb-2">Email</h6>
+                                    <p class="h5 mb-0">{{user.email}}</p>
+                                </div>
+                            </div>
+                            
+                            <div ng-if="user.role != 'Receptionist'" class="col-12">
+                                <hr class="my-4">
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="bg-light p-4 rounded-3 h-100">
+                                            <h6 class="text-muted mb-2">Phone Number</h6>
+                                            <p class="h6 mb-0">{{user.phone_number}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="bg-light p-4 rounded-3 h-100">
+                                            <h6 class="text-muted mb-2">Age</h6>
+                                            <p class="h6 mb-0">{{user.age}}</p>
+                                        </div>
+                                    </div>
+                                    <div ng-if="user.role == 'Doctor'" class="col-12">
+                                        <div class="row g-4">
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Qualification</h6>
+                                                    <p class="h6 mb-0">{{user.qualification}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Consultation Fee</h6>
+                                                    <p class="h6 mb-0">Rs. {{user.consultation_fee}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Speciality</h6>
+                                                    <p class="h6 mb-0">{{user.specialist}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Experience</h6>
+                                                    <p class="h6 mb-0">{{user.experience}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div ng-if="user.role == 'Patient'" class="col-12">
+                                        <div class="row g-4">
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Height</h6>
+                                                    <p class="h6 mb-0">{{user.height}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Weight</h6>
+                                                    <p class="h6 mb-0">{{user.weight}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Blood Group</h6>
+                                                    <p class="h6 mb-0">{{user.blood_group}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="bg-light p-4 rounded-3 h-100">
+                                                    <h6 class="text-muted mb-2">Address</h6>
+                                                    <p class="h6 mb-0">{{user.address}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-5">
+                            <button class="btn btn-primary btn-lg" ng-if="user.role != 'Receptionist'">Edit Profile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

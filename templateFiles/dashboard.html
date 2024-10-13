@@ -1,0 +1,48 @@
+<div ng-controller="dashController as dashCtrl">
+    <div class="container-fluid ">
+        <h1 class="mb-5">Dashboard</h1>
+        <div class="row g-4 mb-4" ng-if="dashCtrl.role == Receptionist">
+            <div class="col-sm-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Total Appointments</h4>
+                        <p class="card-text display-4">{{dashCtrl.stats.total_appointment}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Registered Doctors</h4>
+                        <p class="card-text display-4">{{dashCtrl.stats.doctor_registered}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Registered Patients</h4>
+                        <p class="card-text display-4">{{dashCtrl.stats.patient_registered}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body" ng-if="dashCtrl.role == Receptionist">
+                        <div id="registrationChartContainer" style="height: 300px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
