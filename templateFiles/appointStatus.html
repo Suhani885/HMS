@@ -5,12 +5,12 @@
                 <h3 class="mb-5">Pending Appointments Approval</h3>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
-                        <thead class="thead-light">
+                        <thead>
                             <tr>
                                 <th scope="col" class="d-none d-md-table-cell">ID</th>
                                 <th scope="col">Patient</th>
                                 <th scope="col" class="d-none d-lg-table-cell">Email</th>
-                                <th scope="col" class="d-none d-md-table-cell">Doctor</th>
+                                <th scope="col" ng-if="statusCtrl.appointments.role == 'Receptionist'" class="d-none d-md-table-cell">Doctor</th>
                                 <th scope="col">Date</th>
                                 <th scope="col" class="d-none d-lg-table-cell">Reason</th>
                                 <th scope="col">Action</th>
@@ -22,10 +22,10 @@
                                 <td>
                                     {{appoint.name}}
                                     <small class="text-muted d-block d-lg-none">{{appoint.email}}</small>
-                                    <small ng-if="statusCtrl.role == 'Receptionist'" class="text-muted d-block d-md-none">{{appoint.doctor}}</small>
+                                    <small ng-if="statusCtrl.appointments.role == 'Receptionist'" class="text-muted d-block d-md-none">{{appoint.doctor}}</small>
                                 </td>
                                 <td class="d-none d-lg-table-cell">{{appoint.email}}</td>
-                                <td class="d-none d-md-table-cell">{{appoint.doctor}}</td>
+                                <td class="d-none d-md-table-cell" ng-if="statusCtrl.appointments.role == 'Receptionist'">{{appoint.doctor}}</td>
                                 <td>{{appoint.preferred_date | date: 'mediumDate'}}</td>
                                 <td class="d-none d-lg-table-cell">
                                     <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{appoint.reason}}">

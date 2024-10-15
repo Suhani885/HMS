@@ -1,0 +1,106 @@
+<div ng-controller="patientController as patientCtrl">
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-12">
+                <h2 class="mb-5">All Patients</h2>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    <div class="col mb-4" ng-repeat="patient in patientCtrl.patients">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">{{patient.name}}</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text"><strong>Appointment ID:</strong> {{patient.id}}</p>
+                                <p class="card-text"><strong>Email:</strong> {{patient.email}}</p>
+                                <p class="card-text"><strong>Date:</strong> {{patient.date_of_appointment | date: 'mediumDate'}}</p>
+                                <p class="card-text"><strong>Reason:</strong> {{patient.reason}}</p>
+                                <p class="card-text"><strong>Symptom:</strong> {{patient.symptoms}}</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-sm btn-outline-primary" ng-click="patientCtrl.openPrescriptionModal(patient)">
+                                    <i class="bi bi-pencil-square"></i> Give Prescription
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="prescriptionModal" tabindex="-1" aria-labelledby="prescriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="prescriptionModalLabel">Give Prescription for {{patientCtrl.selectedPatient.name}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form ng-submit="patientCtrl.submitPrescription()">
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label">Diagnosis</label>
+                            <input type="text" class="form-control" id="diagnosis" ng-model="patientCtrl.prescription.diagnosis" required>
+                        </div>
+                        <div ng-repeat="medicine in patientCtrl.prescription.medicines">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label">Medicine</label>
+                                    <input type="text" class="form-control" ng-model="medicine.name" required>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">No. of Days</label>
+                                    <input type="number" class="form-control" ng-model="medicine.days" required>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Dosage</label>
+                                    <input type="text" class="form-control" ng-model="medicine.dosage" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary mb-3" ng-click="patientCtrl.addMedicine()">Add Another Medicine</button>
+                        <div class="mb-3">
+                            <label for="instructions" class="form-label">Instructions</label>
+                            <textarea class="form-control" id="instructions" rows="3" ng-model="patientCtrl.prescription.instructions" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Prescription</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  
+        <!-- $scope.exportAction = function (option) {
+          switch (option) {
+              case 'pdf': $scope.$broadcast('export-pdf', {}); 
+                  break; 
+              case 'excel': $scope.$broadcast('export-excel', {});
+                  break; 
+              default: console.log('no event caught'); 
+          }
+      }
+
+      app.directive('exportTable', function(){
+        var link = function ($scope, elm, attr) {
+          $scope.$on('export-pdf', function (e, d) {
+              elm.tableExport({ type: 'pdf', escape: false });
+          });
+          $scope.$on('export-excel', function (e, d) {
+              elm.tableExport({ type: 'excel', escape: false });
+          });
+      }
+      return {
+          restrict: 'C',
+          link: link
+      }
+});
+
+<a href="#" data-ng-click="exportAction('excel')"> Export Excel</a><br/><br/>
+<a href="#" data-ng-click="exportAction('pdf')"> Export Pdf</a><br/><br/> -->
+
+<!-- $scope.printWindow = function () {
+    window.print()
+  } -->
+        
+    
