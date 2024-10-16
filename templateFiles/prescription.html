@@ -1,0 +1,32 @@
+<div ng-controller="presController as presCtrl">
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-12">
+                <h1 class="display-6 mb-4">All Prescriptions</h1>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    <div class="col mb-4">
+                        <div class="card h-100">
+                            <div ng-repeat="prescription in presCtrl.pres" class="card mb-3">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0"><strong>Appointment ID:</strong> {{prescription.appointment_id}}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text"><strong>Diagnosis:</strong> {{prescription.diagnosis}}</p>
+                                    <p class="card-text"><strong>Instructions:</strong> {{prescription.instruction}}</p>
+                                    <h6 class="card-title mt-4"><strong>Prescribed Medicines:</strong></h6>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item" ng-repeat="medicine in prescription.medicine">
+                                            {{medicine.medicine}} - {{medicine.dosage}} for {{medicine.days}} days
+                                        </li>
+                                    </ul>
+                                    <button class="btn btn-primary mt-3" ng-click="presCtrl.printRecords()">Save As Pdf</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

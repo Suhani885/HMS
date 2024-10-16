@@ -1,5 +1,5 @@
 const app = angular.module('app', ['ui.router','ui.bootstrap']);
-var baseUrl = 'https://10.21.96.23:8888';
+var baseUrl = 'https://10.21.97.42:8888';
 
 app.service('loaderService', function() {
     this.isLoading = false;
@@ -96,6 +96,12 @@ app.config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider,
             templateUrl: 'templateFiles/record.html',
             controller: 'recordController',
             controllerAs: 'recordCtrl'
+        })
+        .state('user.prescription', {
+            url: '/prescription',
+            templateUrl: 'templateFiles/prescription.html',
+            controller: 'presController',
+            controllerAs: 'presCtrl'
         })
         .state('docReg', {
             url: '/docReg',
@@ -228,7 +234,7 @@ app.controller('docRegController', ['$http', '$state','loaderService', function 
     docRegCtrl.fetchSpecialization();
 }]);
 
-app.controller('appointController','loaderService', ['$http', '$state', function($http, $state,loaderService) {
+app.controller('appointController', ['$http', '$state','loaderService', function($http, $state,loaderService) {
     var appointCtrl = this;
     appointCtrl.specialists = [];
     appointCtrl.doctors = [];
@@ -305,7 +311,7 @@ app.controller('appointController','loaderService', ['$http', '$state', function
     };
 }]);
 
-app.controller('LoginController','loaderService', ['$http', '$state', function ($http, $state,loaderService) {
+app.controller('LoginController',['$http', '$state','loaderService', function ($http, $state,loaderService) {
     var loginCtrl = this;
     loginCtrl.email = '';
     loginCtrl.password = '';
@@ -371,7 +377,7 @@ app.controller('LoginController','loaderService', ['$http', '$state', function (
     // loginCtrl.checkSession();
 }]);
 
-app.controller('LandingController','loaderService', ['$http', '$state', function ($http, $state,loaderService) {
+app.controller('LandingController', ['$http', 'loaderService', function ($http,loaderService) {
     var landingCtrl = this;
     landingCtrl.details = [];
 
@@ -412,7 +418,7 @@ app.controller('LandingController','loaderService', ['$http', '$state', function
     landingCtrl.fetchDoctors();
 }]);
 
-app.controller('userController','loaderService', ['$http', '$state', function ($http, $state,loaderService) {
+app.controller('userController', ['$http', '$state','loaderService', function ($http, $state,loaderService) {
     var userCtrl = this;
     userCtrl.navs = [];
     userCtrl.details = [];
@@ -482,7 +488,7 @@ app.controller('userController','loaderService', ['$http', '$state', function ($
     userCtrl.fetchNav();
 }]);
 
-app.controller('dashController','loaderService', ['$http', function($http,loaderService) {
+app.controller('dashController',['$http','loaderService', function($http,loaderService) {
     var dashCtrl = this;
     dashCtrl.stats = {};
 
@@ -555,7 +561,7 @@ app.controller('dashController','loaderService', ['$http', function($http,loader
     dashCtrl.fetchDashboardStats();
 }]);
 
-app.controller('profileController','loaderService', ['$http', function($http,loaderService) {
+app.controller('profileController', ['$http','loaderService', function($http,loaderService) {
     var profileCtrl = this;
     profileCtrl.users = [];
 
@@ -579,10 +585,11 @@ app.controller('profileController','loaderService', ['$http', function($http,loa
     profileCtrl.fetchUserProfile();
 }]);
 
-app.controller('statusController','loaderService', ['$http', function($http,loaderService) {
+app.controller('statusController', ['$http','loaderService', function($http,loaderService) {
     var statusCtrl = this;
     statusCtrl.appointments = [];
     statusCtrl.details = [];
+    statusCtrl.role={};
 
     statusCtrl.fetchAppointments = function() {
         loaderService.show();
@@ -595,6 +602,7 @@ app.controller('statusController','loaderService', ['$http', function($http,load
             loaderService.hide();
             console.log(response);
             statusCtrl.appointments = response.data.list;
+            statusCtrl.role=response.data.role;
         }, function(error) {
             loaderService.hide();
             console.error('Error fetching appointments:', error);
@@ -697,11 +705,13 @@ app.controller('statusController','loaderService', ['$http', function($http,load
     statusCtrl.fetchAppointments();
 }]);
 
-app.controller('patientController','loaderService', ['$http', function($http,loaderService) {
+app.controller('patientController', ['$http','$window', 'loaderService', function($http,$window,loaderService) {
     var patientCtrl = this;
     patientCtrl.patients = [];
+    patientCtrl.pres = [];
     patientCtrl.selectedPatient = {};
     patientCtrl.prescription = {};
+    patientCtrl.role = {};
 
     patientCtrl.fetchAppointments = function() {
         loaderService.show();
@@ -714,16 +724,49 @@ app.controller('patientController','loaderService', ['$http', function($http,loa
             loaderService.hide();
             console.log("Appointments:", response);
             patientCtrl.patients = response.data.details;
+            patientCtrl.role = response.data.role;
         }, function(error) {
             loaderService.hide();
             console.log("Error fetching approved appointments", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "Failed to fetch appointments. Please try again."
+            });
+        });
+    };
+
+    patientCtrl.viewPrescriptionModal = function(patient) {
+        patientCtrl.selectedPatient = patient;
+        loaderService.show();
+        var req = {
+            method: 'POST',
+            url: `${baseUrl}/vitalcure/list_doc_pres/`,
+            data: {
+                "appointment_id": patient.id
+            },
+            withCredentials: true
+        };
+        $http(req).then(function(response) {
+            loaderService.hide();
+            patientCtrl.pres = response.data.list;
+            var viewPrescriptionModal = new bootstrap.Modal(document.getElementById('viewPrescriptionModal'));
+            viewPrescriptionModal.show();
+        }, function(error) {
+            loaderService.hide();
+            console.log("error", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "Failed to fetch prescription. Please try again."
+            });
         });
     };
 
     patientCtrl.openPrescriptionModal = function(patient) {
         patientCtrl.selectedPatient = patient;
         patientCtrl.prescription = {
-            medicines: [{}],  
+            medicines: [{}],
             diagnosis: '',
             instructions: ''
         };
@@ -738,48 +781,91 @@ app.controller('patientController','loaderService', ['$http', function($http,loa
     patientCtrl.submitPrescription = function() {
         loaderService.show();
         var prescriptionData = {
-            "patient_id": patientCtrl.selectedPatient.id,
+            "appointment_id": patientCtrl.selectedPatient.id,
             "diagnosis": patientCtrl.prescription.diagnosis,
-            "medicines": patientCtrl.prescription.medicines,
-            "instructions": patientCtrl.prescription.instructions
+            "medicine": patientCtrl.prescription.medicines.map(m => m.name),
+            "day": patientCtrl.prescription.medicines.map(m => m.days),
+            "dosage": patientCtrl.prescription.medicines.map(m => m.dosage),
+            "instruction": patientCtrl.prescription.instructions
         };
         var req = {
             method: 'POST',
-            url: `${baseUrl}/vitalcure/prescription/`,
+            url: `${baseUrl}/vitalcure/create_pres/`,
             data: prescriptionData,
             withCredentials: true
         };
         $http(req).then(function(response) {
             loaderService.hide();
             console.log("Prescription submitted:", response);
+            Swal.fire({
+                icon: 'success',
+                text: response.data.message
+            });
             var prescriptionModal = bootstrap.Modal.getInstance(document.getElementById('prescriptionModal'));
             prescriptionModal.hide();
+            patientCtrl.fetchAppointments(); 
         }, function(error) {
             loaderService.hide();
             console.log("Error submitting prescription", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.data.error || "An unexpected error occurred!"
+            });
         });
+    };
+
+    // patientCtrl.exportToPdf = function() {
+    //     var htmlContent = `<p class="card-text"><strong>Appointment ID:</strong> {{prescription.appointment_id}}</p>
+    //                         <p class="card-text"><strong>Diagnosis:</strong> {{prescription.diagnosis}}</p>
+    //                         <p class="card-text"><strong>Instructions:</strong> {{prescription.instruction}}</p>
+    //                         <h6 class="card-title mt-4"><strong>Prescribed Medicines:</strong></h6>
+    //                         <ul class="list-group list-group-flush">
+    //                             <li class="list-group-item" ng-repeat="medicine in prescription.medicine">
+    //                                 {{medicine.medicine}} - {{medicine.dosage}} for {{medicine.days}} days
+    //                             </li>
+    //                         </ul>`;
+
+    //     var pdfContent = JSON.stringify(htmlContent);
+    //     var blob = new Blob([pdfContent], { type: 'application/pdf' });
+    //     var link = document.createElement("a");
+    //     if (link.download !== undefined) {
+    //         var url = URL.createObjectURL(blob);
+    //         link.setAttribute("href", url);
+    //         link.setAttribute("download", "prescription.pdf");
+    //         link.style.visibility = 'hidden';
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+    //     }
+    // };
+
+    patientCtrl.printRecords = function() {
+        $window.print();
     };
 
     patientCtrl.fetchAppointments();
 }]);
 
-app.controller('recordController', ['$http','$window',function($http,$window) {
+app.controller('recordController', ['$http', function($http) {
     var recordCtrl = this;
-    recordCtrl.all = []; 
-    recordCtrl.searchQuery = ''; 
+    recordCtrl.all = [];
+    recordCtrl.role = {};
+    recordCtrl.searchQuery = '';
     recordCtrl.searchResults = [];
-    
+
     recordCtrl.fetchAll = function() {
         var req = {
             method: 'GET',
-            url: `${baseUrl}/vitalcure/reports/`,
+            url: `${baseUrl}/vitalcure/records/`,
             withCredentials: true
         };
         $http(req).then(function(response) {
             recordCtrl.all = response.data.details;
-            recordCtrl.search(); 
+            recordCtrl.role = response.data.role;
+            recordCtrl.search();
         }, function(error) {
-            console.error('Error fetching products:', error);
+            console.error('Error fetching records:', error);
         });
     };
 
@@ -790,23 +876,64 @@ app.controller('recordController', ['$http','$window',function($http,$window) {
                        (patient.doctor && patient.doctor.toLowerCase().includes(recordCtrl.searchQuery.toLowerCase()));
             });
         } else {
-            recordCtrl.searchResults = []; 
+            recordCtrl.searchResults = [];
         }
     };
 
-    // <button id="btnExport" onclick="exportReportToExcel(this)">Export HTML Table</button>
-    // function exportReportToExcel() {
-    //     let table = document.getElementsByID("table");
-    //     TableToExcel.convert(table[0], {
-    //     name: `file.xlsx`,
-    //     sheet: {
-    //     name: 'Sheet 1'
-    //     }
-    //     });
-    //     }
+    recordCtrl.exportToExcel = function() {
+        var data = recordCtrl.all;
+        var htmlContent = '<table><tr><th>ID</th><th>Patient Name</th><th>Email</th><th>Doctor</th><th>Appointment Date</th><th>Reason</th><th>Status</th></tr>';
 
-    recordCtrl.printRecords = function() {
+        data.forEach(function(patient) {
+            htmlContent += '<tr>';
+            htmlContent += `<td>${patient.id}</td>`;
+            htmlContent += `<td>${patient.name}</td>`;
+            htmlContent += `<td>${patient.email}</td>`;
+            htmlContent += `<td>${patient.doctor || ''}</td>`;
+            htmlContent += `<td>${new Date(patient.preferred_date).toLocaleDateString()}</td>`;
+            htmlContent += `<td>${patient.reason}</td>`;
+            htmlContent += `<td>${patient.status}</td>`;
+            htmlContent += '</tr>';
+        });
+
+        htmlContent += '</table>';
+
+        var blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+        var link = document.createElement("a");
+        if (link.download !== undefined) {
+            var url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "patient_records.xls");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
+    recordCtrl.fetchAll();
+}]);
+
+app.controller('presController', ['$http','$window',function($http,$window) {
+    var presCtrl = this;
+    presCtrl.pres = [];
+
+    presCtrl.fetchPrescriptions = function() {
+        var req = {
+            method: 'GET',
+            url: `${baseUrl}/vitalcure/list_pres/`,
+            withCredentials: true
+        };
+        $http(req).then(function(response) {
+            presCtrl.pres = response.data.list;
+        }, function(error) {
+            console.error('Error fetching products:', error);
+        });
+    };
+    presCtrl.fetchPrescriptions();
+
+    presCtrl.printRecords = function() {
         $window.print();
     };
-    recordCtrl.fetchAll();
-}]); 
+
+}]);

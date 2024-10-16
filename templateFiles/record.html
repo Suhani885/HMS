@@ -1,13 +1,12 @@
 <div ng-controller="recordController as recordCtrl">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" ng-if="recordCtrl.all.role == 'Receptionist'">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" ng-if="recordCtrl.role == 'Receptionist'">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarContent">
-                <button class="btn btn-secondary me-2" ng-click="recordCtrl.printRecords()">Save as PDF</button>
-                <!-- <a href="#" id="print">GENERATE PDF!</a> -->
                 <form class="d-flex me-auto" ng-submit="recordCtrl.search()">
                     <input class="form-control me-2" type="search" ng-model="recordCtrl.searchQuery" required autocomplete="on" ng-change="recordCtrl.search()" placeholder="Search records..." style="width: 400px;" aria-label="Search">
                     <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
                 </form>
+                <button class="btn btn-success me-2 ml-5" ng-click="recordCtrl.exportToExcel()">Export to Excel</button>
             </div>
         </div>
     </nav>
@@ -21,7 +20,7 @@
                             <th scope="col" class="d-none d-md-table-cell">ID</th>
                             <th scope="col">Patient Name</th>
                             <th scope="col" class="d-none d-lg-table-cell">Email</th>
-                            <th scope="col" class="d-none d-md-table-cell">Doctor</th>
+                            <th scope="col" class="d-none d-md-table-cell" >Doctor</th>
                             <th scope="col">Appointment Date</th>
                             <th scope="col" class="d-none d-lg-table-cell">Reason</th>
                             <th scope="col">Status</th>
@@ -35,7 +34,7 @@
                                 <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
                             </td>
                             <td class="d-none d-lg-table-cell">{{patient.email}}</td>
-                            <td class="d-none d-md-table-cell">{{patient.doctor}}</td>
+                            <td class="d-none d-md-table-cell" >{{patient.doctor}}</td>
                             <td>{{patient.preferred_date  | date: 'mediumDate'}}</td>
                             <td class="d-none d-lg-table-cell">
                                 <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{patient.reason}}">
@@ -52,15 +51,19 @@
                 </table>
             </div>
             <div class="col-12">
-                <h3 class="mb-4">Patient Records</h3>
+                <h1 class="display-6 mb-2" ng-if="recordCtrl.role == 'Doctor' ">Patient Records</h1>
+                <h1 class="display-6 mb-2" ng-if="recordCtrl.role == 'Receptionist'">Patient Records</h1>
+                <h1 class="display-6 mb-2" ng-if="recordCtrl.role == 'Patient'">All Records</h1>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" id="container">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col" class="d-none d-md-table-cell">ID</th>
-                                <th scope="col">Patient Name</th>
+                                <th scope="col" ng-if="recordCtrl.role == 'Doctor'">Patient Name</th>
+                                <th scope="col" ng-if="recordCtrl.role == 'Receptionist'">Patient Name</th>
                                 <th scope="col" class="d-none d-lg-table-cell">Email</th>
-                                <th scope="col" class="d-none d-md-table-cell">Doctor</th>
+                                <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Receptionist'">Doctor</th>
+                                <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Patient' ">Doctor</th>
                                 <th scope="col">Appointment Date</th>
                                 <th scope="col" class="d-none d-lg-table-cell">Reason</th>
                                 <th scope="col">Status</th>
@@ -69,12 +72,17 @@
                         <tbody>
                             <tr ng-repeat="patient in recordCtrl.all">
                                 <td class="d-none d-md-table-cell">{{patient.id}}</td>
-                                <td>
+                                <td ng-if="recordCtrl.role == 'Doctor'">
+                                    {{patient.name}}
+                                    <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
+                                </td>
+                                <td ng-if="recordCtrl.role == 'Receptionist'">
                                     {{patient.name}}
                                     <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
                                 </td>
                                 <td class="d-none d-lg-table-cell">{{patient.email}}</td>
-                                <td class="d-none d-md-table-cell">{{patient.doctor}}</td>
+                                <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Receptionist'">{{patient.doctor}}</td>
+                                <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Patient'">{{patient.doctor}}</td>
                                 <td>{{patient.preferred_date | date: 'mediumDate'}}</td>
                                 <td class="d-none d-lg-table-cell">
                                     <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{patient.reason}}">
@@ -94,31 +102,6 @@
         </div>
     </div>
 </div>
-
-
-<!-- <style>
-    @media print {
-        .no-print {
-            display: none !important;
-        }
-        body {
-            font-size: 12pt;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    }
-</style> -->
-
 
 
   

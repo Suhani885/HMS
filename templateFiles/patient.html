@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row mt-4">
             <div class="col-12">
-                <h2 class="mb-5">All Patients</h2>
+                <h1 class="display-6 mb-4">All Patients</h1>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     <div class="col mb-4" ng-repeat="patient in patientCtrl.patients">
                         <div class="card h-100">
@@ -17,8 +17,11 @@
                                 <p class="card-text"><strong>Symptom:</strong> {{patient.symptoms}}</p>
                             </div>
                             <div class="card-footer">
-                                <button class="btn btn-sm btn-outline-primary" ng-click="patientCtrl.openPrescriptionModal(patient)">
+                                <button class="btn btn-sm btn-outline-primary" ng-click="patientCtrl.openPrescriptionModal(patient)" ng-if="patient.is_prescribed == false">
                                     <i class="bi bi-pencil-square"></i> Give Prescription
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" ng-click="patientCtrl.viewPrescriptionModal(patient)" ng-if="patient.is_prescribed == true">
+                                    <i class="bi bi-eye"></i> View Prescription
                                 </button>
                             </div>
                         </div>
@@ -40,29 +43,60 @@
                             <label for="diagnosis" class="form-label">Diagnosis</label>
                             <input type="text" class="form-control" id="diagnosis" ng-model="patientCtrl.prescription.diagnosis" required>
                         </div>
-                        <div ng-repeat="medicine in patientCtrl.prescription.medicines">
-                            <div class="row mb-3">
+                        <div ng-repeat="medicine in patientCtrl.prescription.medicines" class="mb-3">
+                            <div class="row">
                                 <div class="col">
                                     <label class="form-label">Medicine</label>
                                     <input type="text" class="form-control" ng-model="medicine.name" required>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">No. of Days</label>
-                                    <input type="number" class="form-control" ng-model="medicine.days" required>
+                                    <input type="number" class="form-control" ng-model="medicine.days" min="1" required>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">Dosage</label>
                                     <input type="text" class="form-control" ng-model="medicine.dosage" required>
                                 </div>
+                                <div class="col-auto d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger" ng-click="patientCtrl.prescription.medicines.splice($index, 1)" ng-if="!$first">Remove</button>
+                                </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-secondary mb-3" ng-click="patientCtrl.addMedicine()">Add Another Medicine</button>
+                        <button type="button" class="btn btn-secondary mb-3" ng-click="patientCtrl.addMedicine()">Add</button>
                         <div class="mb-3">
                             <label for="instructions" class="form-label">Instructions</label>
-                            <textarea class="form-control" id="instructions" rows="3" ng-model="patientCtrl.prescription.instructions" required></textarea>
+                            <textarea class="form-control" id="instructions" rows="3" ng-model="patientCtrl.prescription.instructions"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit Prescription</button>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="viewPrescriptionModal" tabindex="-1" aria-labelledby="viewPrescriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewPrescriptionModalLabel">Prescription for {{patientCtrl.selectedPatient.name}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div ng-repeat="prescription in patientCtrl.pres" class="card mb-3">
+                        <div class="card-body">
+                            <p class="card-text"><strong>Appointment ID:</strong> {{prescription.appointment_id}}</p>
+                            <p class="card-text"><strong>Diagnosis:</strong> {{prescription.diagnosis}}</p>
+                            <p class="card-text"><strong>Instructions:</strong> {{prescription.instruction}}</p>
+                            <h6 class="card-title mt-4"><strong>Prescribed Medicines:</strong></h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item" ng-repeat="medicine in prescription.medicine">
+                                    {{medicine.medicine}} - {{medicine.dosage}} for {{medicine.days}} days
+                                </li>
+                            </ul>
+                            <button class="btn btn-primary mt-3" ng-click="patientCtrl.printRecords()" >Save As Pdf</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,36 +105,3 @@
 
 
   
-        <!-- $scope.exportAction = function (option) {
-          switch (option) {
-              case 'pdf': $scope.$broadcast('export-pdf', {}); 
-                  break; 
-              case 'excel': $scope.$broadcast('export-excel', {});
-                  break; 
-              default: console.log('no event caught'); 
-          }
-      }
-
-      app.directive('exportTable', function(){
-        var link = function ($scope, elm, attr) {
-          $scope.$on('export-pdf', function (e, d) {
-              elm.tableExport({ type: 'pdf', escape: false });
-          });
-          $scope.$on('export-excel', function (e, d) {
-              elm.tableExport({ type: 'excel', escape: false });
-          });
-      }
-      return {
-          restrict: 'C',
-          link: link
-      }
-});
-
-<a href="#" data-ng-click="exportAction('excel')"> Export Excel</a><br/><br/>
-<a href="#" data-ng-click="exportAction('pdf')"> Export Pdf</a><br/><br/> -->
-
-<!-- $scope.printWindow = function () {
-    window.print()
-  } -->
-        
-    

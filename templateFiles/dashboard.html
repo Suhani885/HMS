@@ -29,7 +29,14 @@
         </div>
 
         <div class="row g-4" >
-            <div class="col-md-6">
+            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'Doctor'">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'Receptionist'">
                 <div class="card">
                     <div class="card-body">
                         <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
@@ -40,6 +47,31 @@
                 <div class="card">
                     <div class="card-body">
                         <div id="registrationChartContainer" style="height: 300px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid" ng-if="dashCtrl.stats.role == 'Patient'">
+            <h1 class="mb-5">Patient Dashboard</h1>
+            <div class="row g-4 mb-4">
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h4 class="card-title">Total Appointments</h4>
+                            <p class="card-text display-4">{{dashCtrl.stats.total}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-8">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title">Recent Prescription</h4>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item" ng-repeat="prescription in dashCtrl.recentPrescriptions">
+                                    <strong>{{prescription.date | date:'mediumDate'}}</strong>: {{prescription.medication}} - {{prescription.dosage}}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
