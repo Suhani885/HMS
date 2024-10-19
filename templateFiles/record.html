@@ -1,9 +1,9 @@
 <div ng-controller="recordController as recordCtrl">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" ng-if="recordCtrl.role == 'Receptionist'">
+    <nav class="navbar navbar-expand-lg navbar-light" ng-if="recordCtrl.role == 'Receptionist'">
         <div class="container-fluid">
-            <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="collapse navbar-collapse align-items-center justify-content-center " id="navbarContent">
                 <form class="d-flex me-auto" ng-submit="recordCtrl.search()">
-                    <input class="form-control me-2" type="search" ng-model="recordCtrl.searchQuery" required autocomplete="on" ng-change="recordCtrl.search()" placeholder="Search records..." style="width: 400px;" aria-label="Search">
+                    <input class="form-control me-2" type="search" ng-model="recordCtrl.searchQuery" required autocomplete="on" ng-change="recordCtrl.search()" placeholder="Search records..." style="width: 500px;" aria-label="Search">
                     <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
                 </form>
                 <button class="btn btn-success me-2 ml-5" ng-click="recordCtrl.exportToExcel()">Export to Excel</button>
@@ -17,7 +17,6 @@
                 <table class="table table-striped table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col" class="d-none d-md-table-cell">ID</th>
                             <th scope="col">Patient Name</th>
                             <th scope="col" class="d-none d-lg-table-cell">Email</th>
                             <th scope="col" class="d-none d-md-table-cell" >Doctor</th>
@@ -28,7 +27,6 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="patient in recordCtrl.searchResults">
-                            <td class="d-none d-md-table-cell">{{patient.id}}</td>
                             <td>
                                 {{patient.name}}
                                 <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
@@ -50,18 +48,18 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12">
-                <h1 class="display-6 mb-2" ng-if="recordCtrl.role == 'Doctor' ">Patient Records</h1>
-                <h1 class="display-6 mb-2" ng-if="recordCtrl.role == 'Receptionist'">Patient Records</h1>
-                <h1 class="display-6 mb-2" ng-if="recordCtrl.role == 'Patient'">All Records</h1>
+            <div class="col-12" ng-if="recordCtrl.searchResults.length == 0">
+                <div class="text-center mb-5">
+                    <h1 class="display-5 fw-bold">All Records</h1>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" id="container">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" class="d-none d-md-table-cell">ID</th>
                                 <th scope="col" ng-if="recordCtrl.role == 'Doctor'">Patient Name</th>
                                 <th scope="col" ng-if="recordCtrl.role == 'Receptionist'">Patient Name</th>
-                                <th scope="col" class="d-none d-lg-table-cell">Email</th>
+                                <th scope="col" class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Doctor'">Email</th>
+                                <th scope="col" class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Receptionist'">Email</th>
                                 <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Receptionist'">Doctor</th>
                                 <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Patient' ">Doctor</th>
                                 <th scope="col">Appointment Date</th>
@@ -71,7 +69,6 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="patient in recordCtrl.all">
-                                <td class="d-none d-md-table-cell">{{patient.id}}</td>
                                 <td ng-if="recordCtrl.role == 'Doctor'">
                                     {{patient.name}}
                                     <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
@@ -80,7 +77,8 @@
                                     {{patient.name}}
                                     <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
                                 </td>
-                                <td class="d-none d-lg-table-cell">{{patient.email}}</td>
+                                <td class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Doctor'">{{patient.email}}</td>
+                                <td class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Receptionist'">{{patient.email}}</td>
                                 <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Receptionist'">{{patient.doctor}}</td>
                                 <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Patient'">{{patient.doctor}}</td>
                                 <td>{{patient.preferred_date | date: 'mediumDate'}}</td>

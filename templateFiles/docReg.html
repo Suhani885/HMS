@@ -26,7 +26,7 @@
               </div>
               <div class="col-sm-6 mb-2">
                 <label for="exp" class="form-label ">Years Of Experience</label>
-                <input type="number" class="form-control" autocomplete="on" ng-model="docRegCtrl.exp" id="exp" min="1">
+                <input type="number" class="form-control" autocomplete="on" required ng-model="docRegCtrl.exp" id="exp" min="1">
               </div>
               <div class="col-sm-3 mb-2">
                 <label for="age" class="form-label">Age</label>
@@ -46,15 +46,19 @@
                 <input type="text" class="form-control" id="qualify" pattern="[a-zA-Z]+" ng-model="docRegCtrl.qualify" required autocomplete="on">
               </div>
               <div class="col-sm-4 mb-2">
-                <label for="specialist" class="form-label">Specialist</label>
+                <label for="specialist" class="form-label">Specialization</label>
                 <select class="form-select form-control" required ng-model="docRegCtrl.specialist" id="specialist">
                   <option value="" disabled selected>Select...</option>
                   <option ng-repeat="specialist in docRegCtrl.specialists" value="{{specialist.name}}">{{specialist.name}}</option>
                 </select>
               </div>
               <div class="col-sm-5 mb-2">
-                <label for="fee" class="form-label">Consult Fee (Rs)</label>
+                <label for="fee" class="form-label">Consultation Fee (Rs)</label>
                 <input type="number" class="form-control" id="fee" ng-model="docRegCtrl.fee" required autocomplete="on" maxlength="4" >
+              </div>
+              <div class="col-sm-12 mb-2">
+                <label for="image">Image</label>
+                <input type="file" class="form-control" id="image" accept="image/*" onchange="angular.element(this).scope().docRegCtrl.img(this)" required>
               </div>
               <div class="col-sm-6">
                 <label for="password" class="form-label">Password</label>

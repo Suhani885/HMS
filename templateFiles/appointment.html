@@ -1,8 +1,10 @@
 <div ng-controller="appointController as appointCtrl">
-    <div class="container-fluid px-4">
-        <h1 class="display-6 mb-4 mt-2">Schedule Appointment</h1>
-        <div class="row">
-            <div class="col-12 col-lg-8 col-xl-8">
+    <div class="container-fluid px-5">
+        <div class="text-center mb-5">
+            <h2 class="display-4 fw-bold">Schedule Appointment</h2>
+        </div>
+        <div class="row justify-content-center align-items-center">
+            <div class="col-12 col-lg-10 col-xl-10">
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <form ng-submit="appointCtrl.appointment()">
@@ -27,11 +29,11 @@
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label for="reason" class="form-label">Reason</label>
-                                    <input class="form-control" type="text" required autocomplete="on" id="reason" ng-model="appointCtrl.reason">
+                                    <input class="form-control" type="text" pattern="[a-zA-Z]+" required autocomplete="on" id="reason" ng-model="appointCtrl.reason">
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label for="symptoms" class="form-label">Symptoms (If any)</label>
-                                    <input class="form-control" id="symptoms" ng-model="appointCtrl.symptom" rows="3"></input>
+                                    <input class="form-control" id="symptoms" pattern="[a-zA-Z]+" ng-model="appointCtrl.symptom" rows="3"></input>
                                 </div>
                                 <div class="col-12 mt-2 mb-2">
                                     <button type="submit" class="btn btn-primary w-100">Schedule Appointment</button>

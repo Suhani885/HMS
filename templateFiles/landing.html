@@ -104,7 +104,7 @@
             <h5 class="card-title mb-0">{{detail.first_name}} {{detail.last_name}}</h5>
           </div>
           <div class="card-body">
-            <img src="images/doc.avif" alt="Doctor's profile" class="rounded-circle mx-auto d-block mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+            <img ng-src="{{landingCtrl.getImageUrl(detail.img)}}" class="rounded-circle mx-auto d-block mb-3" alt="Profile picture" width="100" height="100" style="object-fit: cover;">
             <h6 class="text-center text-primary mb-3">{{detail.specialist}}</h6>
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="text-muted">Experience:</span>

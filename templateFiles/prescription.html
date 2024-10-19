@@ -1,27 +1,55 @@
-<div ng-controller="presController as presCtrl">
-    <div class="container-fluid">
-        <div class="row mt-4">
-            <div class="col-12">
-                <h1 class="display-6 mb-4">All Prescriptions</h1>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    <div class="col mb-4">
-                        <div class="card h-100">
-                            <div ng-repeat="prescription in presCtrl.pres" class="card mb-3">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0"><strong>Appointment ID:</strong> {{prescription.appointment_id}}</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p class="card-text"><strong>Diagnosis:</strong> {{prescription.diagnosis}}</p>
-                                    <p class="card-text"><strong>Instructions:</strong> {{prescription.instruction}}</p>
-                                    <h6 class="card-title mt-4"><strong>Prescribed Medicines:</strong></h6>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item" ng-repeat="medicine in prescription.medicine">
-                                            {{medicine.medicine}} - {{medicine.dosage}} for {{medicine.days}} days
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary mt-3" ng-click="presCtrl.printRecords()">Save As Pdf</button>
-                                </div>
+<div ng-controller="presController as presCtrl" class="container-fluid">
+    <h1 class="display-5 fw-bold text-center mb-5">All Prescriptions</h1>
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="card shadow-sm" ng-repeat="prescription in presCtrl.pres" >
+                <div class="card-header bg-primary text-white py-3">
+                    <h1 class="h3 mb-0 text-center">Appointment ID: {{prescription.appointment_id}}</h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <img src="images/vitalLogo.jpeg" style="max-width: 200px;" alt="logo">
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <h5 class="mt-4">By: {{prescription.doctor}}</h5>
+                    </div>
+                </div>
+                <hr>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Diagnosis:</h6>
+                                <p>{{prescription.diagnosis}}</p>
                             </div>
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Instructions:</h6>
+                                <p>{{prescription.instruction}}</p>
+                            </div>
+                        </div>
+                        <h6 class="text-secondary mb-3">Prescribed Medicines:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light bg-light">
+                                    <tr>
+                                        <th>Medicine</th>
+                                        <th>Dosage</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="medicine in prescription.medicine">
+                                        <td>{{medicine.medicine}}</td>
+                                        <td>{{medicine.dosage}}</td>
+                                        <td>{{medicine.days}} days</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button class="btn btn-primary" ng-click="presCtrl.printRecords()">
+                                <i class="bi bi-file-earmark-pdf me-2"></i>Save as PDF
+                            </button>
                         </div>
                     </div>
                 </div>

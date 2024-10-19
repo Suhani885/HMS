@@ -1,5 +1,5 @@
 const app = angular.module('app', ['ui.router','ui.bootstrap']);
-var baseUrl = 'https://10.21.97.42:8888';
+var baseUrl = 'https://10.21.97.83:8888';
 
 app.service('loaderService', function() {
     this.isLoading = false;
@@ -85,6 +85,18 @@ app.config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider,
             controller: 'patientController',
             controllerAs: 'patientCtrl'
         })
+        .state('user.doctors', {
+            url: '/doctorDetails',
+            templateUrl: 'templateFiles/allDoctors.html',
+            controller: 'docController',
+            controllerAs: 'docCtrl'
+        })
+        .state('user.allPatients', {
+            url: '/patientDetails',
+            templateUrl: 'templateFiles/allPatients.html',
+            controller: 'allController',
+            controllerAs: 'allCtrl'
+        })
         .state('user.appoint', {
             url: '/appointmentStatus',
             templateUrl: 'templateFiles/appointStatus.html',
@@ -114,6 +126,21 @@ app.config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider,
 
 app.controller('pRegController', ['$http', '$state', 'loaderService', function ($http, $state, loaderService) {
     var pRegCtrl = this;
+    pRegCtrl.bgs=[];
+
+    pRegCtrl.img = function(element) {
+        pRegCtrl.image = element.files[0];
+    };
+
+    pRegCtrl.fetchbgs = function() {
+        $http.get(`${baseUrl}/vitalcure/list_bg/`)
+            .then(function(response) {
+                pRegCtrl.bgs = response.data.list;
+            }, function(error) {
+                console.log("Error fetching specializations:", error);
+            });
+    };
+
     pRegCtrl.Register = function() {
         loaderService.show();
         console.log(pRegCtrl.email,pRegCtrl.pass1, pRegCtrl.pass2);
@@ -125,28 +152,33 @@ app.controller('pRegController', ['$http', '$state', 'loaderService', function (
             });
             return;
         }
+        var formData = new FormData();
+        formData.append('first_name', pRegCtrl.fname);
+        formData.append('last_name', pRegCtrl.lname);
+        formData.append('email', pRegCtrl.email);
+        formData.append('phone_number', pRegCtrl.number);
+        formData.append('date_of_birth', pRegCtrl.dob);
+        formData.append('age', pRegCtrl.age);
+        formData.append('blood_group', pRegCtrl.bloodgrp);
+        formData.append('address', pRegCtrl.address);
+        formData.append('gender', pRegCtrl.gender);
+        formData.append('height', pRegCtrl.height);
+        formData.append('weight', pRegCtrl.weight);
+        formData.append('medical_history', pRegCtrl.med);
+        formData.append('password', pRegCtrl.pass1);
+        formData.append('cpassword', pRegCtrl.pass2);
+        formData.append('image', pRegCtrl.image);
+        formData.set('last_name', pRegCtrl.lname || '');
+        formData.set('medical_history', pRegCtrl.med || '');
+    
         var req = {
             method: 'POST',
-            url:`${baseUrl}/vitalcure/patient_register/`,
-            data: {
-                "first_name": pRegCtrl.fname,
-                "last_name": pRegCtrl.lname,
-                "email": pRegCtrl.email,
-                "phone_number": pRegCtrl.number,
-                "date_of_birth": pRegCtrl.dob,
-                "age": pRegCtrl.age,
-                "blood_group":pRegCtrl.bloodgrp,
-                "address":pRegCtrl.address,
-                "gender":pRegCtrl.gender,
-                "height":pRegCtrl.height,
-                "weight":pRegCtrl.weight,
-                "medical_history":pRegCtrl.med,
-                "password": pRegCtrl.pass1,
-                "cpassword": pRegCtrl.pass2
-            }
+            url: `${baseUrl}/vitalcure/patient_register/`,
+            headers: {'Content-Type': undefined},
+            data: formData,
+            withCredentials: true
         };
         $http(req).then(function(response) {
-            loaderService.hide();
             console.log(response);
             Swal.fire({
                 icon: 'success',
@@ -165,11 +197,17 @@ app.controller('pRegController', ['$http', '$state', 'loaderService', function (
             });
         });
     };
+
+    pRegCtrl.fetchbgs();
 }]);
 
 app.controller('docRegController', ['$http', '$state','loaderService', function ($http, $state, loaderService) {
     var docRegCtrl = this;
     docRegCtrl.specialists = [];
+
+    docRegCtrl.img = function(element) {
+        docRegCtrl.image = element.files[0];
+    };
 
     docRegCtrl.Register = function() {
         loaderService.show();
@@ -182,31 +220,36 @@ app.controller('docRegController', ['$http', '$state','loaderService', function 
             });
             return;
         }
+        var formData = new FormData();
+        formData.append('first_name', docRegCtrl.fname);
+        formData.append('last_name', docRegCtrl.lname);
+        formData.append('email', docRegCtrl.email);
+        formData.append('phone_number', docRegCtrl.number);
+        formData.append('specialist', docRegCtrl.specialist);
+        formData.append('age', docRegCtrl.age);
+        formData.append('experience', docRegCtrl.exp);
+        formData.append('qualification', docRegCtrl.qualify);
+        formData.append('gender', docRegCtrl.gender);
+        formData.append('consultation_fee', docRegCtrl.fee);
+        formData.append('password', docRegCtrl.pass1);
+        formData.append('cpassword', docRegCtrl.pass2);
+        formData.append('image', docRegCtrl.image);
+        formData.set('last_name', docRegCtrl.lname || '');
+    
         var req = {
             method: 'POST',
-            url:`${baseUrl}/vitalcure/doctor_register/`,
-            data: {
-                "first_name": docRegCtrl.fname,
-                "last_name": docRegCtrl.lname,
-                "email": docRegCtrl.email,
-                "phone_number": docRegCtrl.number,
-                "age": docRegCtrl.age,
-                "specialist":docRegCtrl.specialist,
-                "experience":docRegCtrl.exp,
-                "qualification":docRegCtrl.qualify,
-                "consultation_fee":docRegCtrl.fee,
-                "gender":docRegCtrl.gender,
-                "password": docRegCtrl.pass1,
-                "cpassword": docRegCtrl.pass2
-            }
+            url: `${baseUrl}/vitalcure/doctor_register/`,
+            headers: {'Content-Type': undefined},
+            data: formData,
+            withCredentials: true
         };
+    
         $http(req).then(function(response) {
-            loaderService.hide();
             console.log(response);
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: 'Doctor Registration successful'
+                text: response.data.message
             }).then(() => {
                 $state.go('login');
             });
@@ -246,8 +289,7 @@ app.controller('appointController', ['$http', '$state','loaderService', function
             }, function(error) {
                 console.log("Error fetching specializations:", error);
             });
-    }
-    appointCtrl.fetchSpecialization();
+    };
 
     appointCtrl.appointment = function() {
         loaderService.show();
@@ -271,13 +313,7 @@ app.controller('appointController', ['$http', '$state','loaderService', function
                 title: 'Success!',
                 text: response.data.message
             }).then(() => {
-                appointCtrl.doc = '';
-                appointCtrl.reason = '';
-                appointCtrl.symptom = '';
-                appointCtrl.specialist = '';
-                appointCtrl.date = null;
-                appointCtrl.doctors = [];
-                $state.go('user.dashboard');
+                appointCtrl.resetForm();
             });
         }, function(error) {
             loaderService.hide();
@@ -309,6 +345,17 @@ app.controller('appointController', ['$http', '$state','loaderService', function
             console.error('Error fetching doctors:', error);
         });
     };
+
+    appointCtrl.resetForm = function() {
+        appointCtrl.doc = '';
+        appointCtrl.reason = '';
+        appointCtrl.symptom = '';
+        appointCtrl.specialist = '';
+        appointCtrl.date = null;
+        appointCtrl.doctors = [];
+    };
+
+    appointCtrl.fetchSpecialization();
 }]);
 
 app.controller('LoginController',['$http', '$state','loaderService', function ($http, $state,loaderService) {
@@ -354,53 +401,30 @@ app.controller('LoginController',['$http', '$state','loaderService', function ($
             });
         } 
     };
-    // loginCtrl.checkSession = function() {
-    //     var req = {
-    //         method: 'GET',
-    //         url: `${baseUrl}/vitalcure/login_user/`,
-    //         withCredentials: true
-    //     };
+    loginCtrl.checkSession = function() {
+        var req = {
+            method: 'GET',
+            url: `${baseUrl}/vitalcure/login_user/`,
+            withCredentials: true
+        };
 
-    //     $http(req).then(function(response) {
-    //         console.log("Session check:", response);
-    //         if (response.data.message === "Doctor is already logged in") {
-    //             $state.go('doctor');
-    //         } else if (response.data.message === "Patient is already logged in") {
-    //             $state.go('patient');
-    //         } else if (response.data.message === "Receptionist is already logged in") {
-    //             $state.go('recep');
-    //         }
-    //     }, function(error) {
-    //         console.log("Session check failed", error);
-    //     });
-    // };
-    // loginCtrl.checkSession();
+        $http(req).then(function(response) {
+            console.log("Session check:", response);
+            route=response.data.url;
+        }, function(error) {
+            console.log("Session check failed", error);
+        });
+    };
+    loginCtrl.checkSession();
 }]);
 
 app.controller('LandingController', ['$http', 'loaderService', function ($http,loaderService) {
     var landingCtrl = this;
     landingCtrl.details = [];
 
-    // landingCtrl.checkSession = function() {
-    //     var req = {
-    //         method: 'GET',
-    //         url: `${baseUrl}/vitalcure/login_user/`,
-    //         withCredentials: true
-    //     };
-
-    //     $http(req).then(function(response) {
-    //         console.log("Session check:", response);
-    //         if (response.data.message === "Doctor is already logged in") {
-    //             $state.go('doctor');
-    //         } else if (response.data.message === "Patient is already logged in") {
-    //             $state.go('patient');
-    //         } else if (response.data.message === "Receptionist is already logged in") {
-    //             $state.go('recep');
-    //         }
-    //     }, function(error) {
-    //         console.log("Session check failed", error);
-    //     });
-    // };
+    landingCtrl.getImageUrl = function(imagePath) {
+        return baseUrl + '/media/' + imagePath;
+    };
 
     landingCtrl.fetchDoctors = function() {
         loaderService.show();
@@ -414,14 +438,63 @@ app.controller('LandingController', ['$http', 'loaderService', function ($http,l
             });
     };
 
-    // landingCtrl.checkSession();
     landingCtrl.fetchDoctors();
+}]);
+
+app.controller('docController', ['$http', 'loaderService', function ($http,loaderService) {
+    var docCtrl = this;
+    docCtrl.details = [];
+
+    docCtrl.getImageUrl = function(imagePath) {
+        return baseUrl + '/media/' + imagePath;
+    };
+
+    docCtrl.fetchDoctors = function() {
+        loaderService.show();
+        $http.get(`${baseUrl}/vitalcure/list_doctors/`)
+            .then(function(response) {
+                loaderService.hide();
+                docCtrl.details = response.data.details;
+            }, function(error) {
+                loaderService.hide();
+                console.log("Error fetching doctors:", error);
+            });
+    };
+
+    docCtrl.fetchDoctors();
+}]);
+
+app.controller('allController', ['$http', 'loaderService', function ($http,loaderService) {
+    var allCtrl = this;
+    allCtrl.details = [];
+
+    allCtrl.getImageUrl = function(imagePath) {
+        return baseUrl + '/media/' + imagePath;
+    };
+
+    allCtrl.fetchPatients = function() {
+        loaderService.show();
+        $http.get(`${baseUrl}/vitalcure/list_patients/`)
+            .then(function(response) {
+                loaderService.hide();
+                allCtrl.details = response.data.details;
+            }, function(error) {
+                loaderService.hide();
+                console.log("Error fetching doctors:", error);
+            });
+    };
+
+    allCtrl.fetchPatients();
 }]);
 
 app.controller('userController', ['$http', '$state','loaderService', function ($http, $state,loaderService) {
     var userCtrl = this;
     userCtrl.navs = [];
     userCtrl.details = [];
+
+    userCtrl.getImageUrl = function(imagePath) {
+        return baseUrl + '/media/' + imagePath;
+    };
 
     userCtrl.logout = function() {
         loaderService.show();
@@ -491,6 +564,7 @@ app.controller('userController', ['$http', '$state','loaderService', function ($
 app.controller('dashController',['$http','loaderService', function($http,loaderService) {
     var dashCtrl = this;
     dashCtrl.stats = {};
+    dashCtrl.pres=[];
 
     dashCtrl.fetchDashboardStats = function() {
         loaderService.show();
@@ -504,6 +578,7 @@ app.controller('dashController',['$http','loaderService', function($http,loaderS
             console.log("Dashboard stats:", response);
             if (response.data.details && response.data.details.length > 0) {
                 dashCtrl.stats = response.data.details[0];
+                dashCtrl.pres = response.data.details;
                 dashCtrl.renderAppointmentChart();
                 dashCtrl.renderRegistrationChart();
             } else {
@@ -609,23 +684,6 @@ app.controller('statusController', ['$http','loaderService', function($http,load
         });
     };
 
-    statusCtrl.fetchUserDetails = function() {
-        loaderService.show();
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/view_panel/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
-            console.log(response);
-            statusCtrl.details = response.data.details;
-        }, function(error) {
-            loaderService.hide();
-            console.error('Error fetching user details:', error);
-        });
-    };
-
     statusCtrl.approve = function(appointment) {
         loaderService.show();
         var req = {
@@ -701,7 +759,6 @@ app.controller('statusController', ['$http','loaderService', function($http,load
         });
     };
 
-    statusCtrl.fetchUserDetails();
     statusCtrl.fetchAppointments();
 }]);
 
@@ -711,7 +768,6 @@ app.controller('patientController', ['$http','$window', 'loaderService', functio
     patientCtrl.pres = [];
     patientCtrl.selectedPatient = {};
     patientCtrl.prescription = {};
-    patientCtrl.role = {};
 
     patientCtrl.fetchAppointments = function() {
         loaderService.show();
@@ -724,7 +780,6 @@ app.controller('patientController', ['$http','$window', 'loaderService', functio
             loaderService.hide();
             console.log("Appointments:", response);
             patientCtrl.patients = response.data.details;
-            patientCtrl.role = response.data.role;
         }, function(error) {
             loaderService.hide();
             console.log("Error fetching approved appointments", error);
@@ -927,7 +982,7 @@ app.controller('presController', ['$http','$window',function($http,$window) {
         $http(req).then(function(response) {
             presCtrl.pres = response.data.list;
         }, function(error) {
-            console.error('Error fetching products:', error);
+            console.error('Error fetching:', error);
         });
     };
     presCtrl.fetchPrescriptions();
@@ -936,4 +991,9 @@ app.controller('presController', ['$http','$window',function($http,$window) {
         $window.print();
     };
 
-}]);
+}]); 
+
+
+
+
+    

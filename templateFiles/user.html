@@ -1,10 +1,10 @@
 <div ng-controller="userController as userCtrl">
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <nav class="col-auto col-sm-3 col-xl-2 px-0 bg-light">
+            <nav class="col-auto col-lg-2 col-lg-3 col-m-3 col-sm-3 px-0 bg-light">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
                     <div class="text-center mb-4" ng-repeat="detail in userCtrl.details">
-                        <img src="images/doc.avif" class="rounded-circle mb-3" alt="Profile picture" width="100" height="100">
+                        <img ng-src="{{userCtrl.getImageUrl(detail.image)}}" class="rounded-circle mb-3" alt="Profile picture" width="100" height="100" style="object-fit: cover;">
                         <h5 class="text-dark">{{detail.name}}</h5>
                         <p class="text-muted">{{detail.speciality}}</p>
                     </div>
@@ -25,7 +25,9 @@
                 </div>
             </nav>
             <main class="col py-3">
-                <h2 class="mb-4 font-weight-bold" ng-repeat="detail in userCtrl.details">Welcome, {{detail.first_name}}</h2>
+                <div class="text-center">
+                    <h1 class="display-5 font-weight-bold mb-3 py-3" ng-repeat="detail in userCtrl.details">Welcome, {{detail.first_name}}!</h1>
+                </div>
                 <div ui-view></div>
             </main>
         </div>
