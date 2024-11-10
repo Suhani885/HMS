@@ -1,12 +1,16 @@
 const app = angular.module('app', ['ui.router','ui.bootstrap']);
-var baseUrl = 'https://10.21.97.83:8888';
+var baseUrl = 'https://10.21.98.200:8888';
 
 app.service('loaderService', function() {
     this.isLoading = false;
+    
     this.show = function() {
+        console.log('Showing loader');
         this.isLoading = true;
     };
+    
     this.hide = function() {
+        console.log('Hiding loader');
         this.isLoading = false;
     };
 });
@@ -14,11 +18,13 @@ app.service('loaderService', function() {
 app.directive('loader', function() {
     return {
         restrict: 'E',
-        template: '<div ng-show="loader.isLoading" class="simple-loader">Loading...</div>',
+        scope: {}, 
+        template: '<div ng-show="loader.loaderService.isLoading" class="simple-loader">Loading...</div>',
         controller: function(loaderService) {
-            this.isLoading = loaderService.isLoading;
+            this.loaderService = loaderService;
         },
-        controllerAs: 'loader'
+        controllerAs: 'loader',
+        bindToController: true
     };
 });
 
@@ -57,7 +63,7 @@ app.config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider,
         }) 
         .state('user', {
             url: '/user',
-            templateUrl: 'templateFiles/user.html',
+            templateUrl: 'templateFiles/nav.html',
             controller: 'userController',
             controllerAs: 'userCtrl'
         })
@@ -75,7 +81,7 @@ app.config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider,
         })
         .state('user.appointment', {
             url: '/appointment',
-            templateUrl: 'templateFiles/appointment.html',
+            templateUrl: 'templateFiles/bookAppointment.html',
             controller: 'appointController',
             controllerAs: 'appointCtrl'
         })
@@ -277,7 +283,7 @@ app.controller('docRegController', ['$http', '$state','loaderService', function 
     docRegCtrl.fetchSpecialization();
 }]);
 
-app.controller('appointController', ['$http', '$state','loaderService', function($http, $state,loaderService) {
+app.controller('appointController', ['$http', '$state', function($http) {
     var appointCtrl = this;
     appointCtrl.specialists = [];
     appointCtrl.doctors = [];
@@ -292,7 +298,6 @@ app.controller('appointController', ['$http', '$state','loaderService', function
     };
 
     appointCtrl.appointment = function() {
-        loaderService.show();
         var req = {
             method: 'POST',
             url: `${baseUrl}/vitalcure/appointment_schedule/`,
@@ -312,9 +317,8 @@ app.controller('appointController', ['$http', '$state','loaderService', function
                 icon: 'success',
                 title: 'Success!',
                 text: response.data.message
-            }).then(() => {
-                appointCtrl.resetForm();
-            });
+            })
+            appointCtrl.resetForm();
         }, function(error) {
             loaderService.hide();
             console.log("error", error);
@@ -327,7 +331,6 @@ app.controller('appointController', ['$http', '$state','loaderService', function
     };
 
     appointCtrl.fetchDocs = function(specialist) {
-        loaderService.show();
         var req = {
             method: 'POST',
             url: `${baseUrl}/vitalcure/spec_doctor/`,
@@ -337,11 +340,9 @@ app.controller('appointController', ['$http', '$state','loaderService', function
             withCredentials: true
         };
         $http(req).then(function(response) {
-            loaderService.hide();
             console.log(response);
             appointCtrl.doctors = response.data.list; 
         }, function(error) {
-            loaderService.hide();
             console.error('Error fetching doctors:', error);
         });
     };
@@ -487,7 +488,7 @@ app.controller('allController', ['$http', 'loaderService', function ($http,loade
     allCtrl.fetchPatients();
 }]);
 
-app.controller('userController', ['$http', '$state','loaderService', function ($http, $state,loaderService) {
+app.controller('userController', ['$http', '$state', 'loaderService', function ($http, $state, loaderService) {
     var userCtrl = this;
     userCtrl.navs = [];
     userCtrl.details = [];
@@ -496,46 +497,50 @@ app.controller('userController', ['$http', '$state','loaderService', function ($
         return baseUrl + '/media/' + imagePath;
     };
 
+    userCtrl.isActive = function(url) {
+        return $state.current.name === 'user.' + url;
+    };
+
     userCtrl.logout = function() {
         loaderService.show();
         Swal.fire({
-        title: 'Are you sure?',
-        text: "You're about to log out!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, log out!'
+            title: 'Are you sure?',
+            text: "You're about to log out!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, log out!'
         }).then((result) => {
-        if (result.isConfirmed) {
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/logout_user/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
-            console.log(response);
-            Swal.fire(
-                'Logged Out!',
-                'You have been successfully logged out.',
-                'success'
-            ).then(() => {
-                $state.go('landing');
-            });
-        }, function(error) {
-            loaderService.hide();
-            console.log("error", error);
-            Swal.fire(
-                'Error!',
-                error.data.message || 'Failed to log out. Please try again!',
-                'error'
-            );
+            if (result.isConfirmed) {
+                var req = {
+                    method: 'GET',
+                    url: `${baseUrl}/vitalcure/logout_user/`,
+                    withCredentials: true
+                };
+                $http(req).then(function(response) {
+                    loaderService.hide();
+                    console.log(response);
+                    Swal.fire(
+                        'Logged Out!',
+                        'You have been successfully logged out.',
+                        'success'
+                    ).then(() => {
+                        $state.go('landing');
+                    });
+                }, function(error) {
+                    loaderService.hide();
+                    console.log("error", error);
+                    Swal.fire(
+                        'Error!',
+                        error.data.message || 'Failed to log out. Please try again!',
+                        'error'
+                    );
+                });
+            }
         });
-        }
-        });
-        };
-    
+    };
+
     userCtrl.fetchNav = function() {
         loaderService.show();
         var req = {
@@ -546,10 +551,7 @@ app.controller('userController', ['$http', '$state','loaderService', function ($
         $http(req).then(function(response) {
             loaderService.hide();
             console.log("Navbar elements:", response);
-            userCtrl.navs = response.data.panel.map(function(nav) {
-                nav.isActive = $state.includes('user.' + nav.url);
-                return nav;
-            });
+            userCtrl.navs = response.data.panel;
             userCtrl.details = response.data.details;
         }, function(error) {
             loaderService.hide();
@@ -557,7 +559,7 @@ app.controller('userController', ['$http', '$state','loaderService', function ($
         });
     };
 
-    $state.go('user.dashboard');  
+    $state.go('user.dashboard');
     userCtrl.fetchNav();
 }]);
 
@@ -762,7 +764,7 @@ app.controller('statusController', ['$http','loaderService', function($http,load
     statusCtrl.fetchAppointments();
 }]);
 
-app.controller('patientController', ['$http','$window', 'loaderService', function($http,$window,loaderService) {
+app.controller('patientController', ['$http','loaderService', function($http,loaderService) {
     var patientCtrl = this;
     patientCtrl.patients = [];
     patientCtrl.pres = [];
@@ -870,35 +872,6 @@ app.controller('patientController', ['$http','$window', 'loaderService', functio
         });
     };
 
-    // patientCtrl.exportToPdf = function() {
-    //     var htmlContent = `<p class="card-text"><strong>Appointment ID:</strong> {{prescription.appointment_id}}</p>
-    //                         <p class="card-text"><strong>Diagnosis:</strong> {{prescription.diagnosis}}</p>
-    //                         <p class="card-text"><strong>Instructions:</strong> {{prescription.instruction}}</p>
-    //                         <h6 class="card-title mt-4"><strong>Prescribed Medicines:</strong></h6>
-    //                         <ul class="list-group list-group-flush">
-    //                             <li class="list-group-item" ng-repeat="medicine in prescription.medicine">
-    //                                 {{medicine.medicine}} - {{medicine.dosage}} for {{medicine.days}} days
-    //                             </li>
-    //                         </ul>`;
-
-    //     var pdfContent = JSON.stringify(htmlContent);
-    //     var blob = new Blob([pdfContent], { type: 'application/pdf' });
-    //     var link = document.createElement("a");
-    //     if (link.download !== undefined) {
-    //         var url = URL.createObjectURL(blob);
-    //         link.setAttribute("href", url);
-    //         link.setAttribute("download", "prescription.pdf");
-    //         link.style.visibility = 'hidden';
-    //         document.body.appendChild(link);
-    //         link.click();
-    //         document.body.removeChild(link);
-    //     }
-    // };
-
-    patientCtrl.printRecords = function() {
-        $window.print();
-    };
-
     patientCtrl.fetchAppointments();
 }]);
 
@@ -922,6 +895,36 @@ app.controller('recordController', ['$http', function($http) {
         }, function(error) {
             console.error('Error fetching records:', error);
         });
+    };
+
+    recordCtrl.deleteAppointment = function(patientId) {
+        if (confirm('Are you sure you want to delete this appointment?')) {
+            var req = {
+                method: 'PATCH',
+                url: `${baseUrl}/vitalcure/delete_appointment/`,
+                data: {
+                    "id": patientId,
+                },
+                withCredentials: true
+            };
+            $http(req).then(function(response) {
+                loaderService.hide();
+                console.log(response);
+                Swal.fire({
+                    icon: 'success',
+                    text: response.data.message
+                });
+                recordCtrl.fetchAll();
+            }, function(error) {
+                loaderService.hide();
+                console.log("error", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.data.error || "An unexpected error occurred!"
+                });
+            });
+        }
     };
 
     recordCtrl.search = function() {
@@ -993,7 +996,3 @@ app.controller('presController', ['$http','$window',function($http,$window) {
 
 }]); 
 
-
-
-
-    

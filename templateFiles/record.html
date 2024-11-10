@@ -1,5 +1,5 @@
 <div ng-controller="recordController as recordCtrl">
-    <nav class="navbar navbar-expand-lg navbar-light" ng-if="recordCtrl.role == 'Receptionist'">
+    <nav class="navbar navbar-expand-lg navbar-light" ng-if="recordCtrl.role == 'R'">
         <div class="container-fluid">
             <div class="collapse navbar-collapse align-items-center justify-content-center " id="navbarContent">
                 <form class="d-flex me-auto" ng-submit="recordCtrl.search()">
@@ -56,31 +56,32 @@
                     <table class="table table-striped table-hover" id="container">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" ng-if="recordCtrl.role == 'Doctor'">Patient Name</th>
-                                <th scope="col" ng-if="recordCtrl.role == 'Receptionist'">Patient Name</th>
-                                <th scope="col" class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Doctor'">Email</th>
-                                <th scope="col" class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Receptionist'">Email</th>
-                                <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Receptionist'">Doctor</th>
-                                <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Patient' ">Doctor</th>
+                                <th scope="col" ng-if="recordCtrl.role == 'D'">Patient Name</th>
+                                <th scope="col" ng-if="recordCtrl.role == 'R'">Patient Name</th>
+                                <th scope="col" class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'D'">Email</th>
+                                <th scope="col" class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'R'">Email</th>
+                                <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'R'">Doctor</th>
+                                <th scope="col" class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'P' ">Doctor</th>
                                 <th scope="col">Appointment Date</th>
                                 <th scope="col" class="d-none d-lg-table-cell">Reason</th>
                                 <th scope="col">Status</th>
+                                <th scope="col" ng-if="recordCtrl.role == 'P' ">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="patient in recordCtrl.all">
-                                <td ng-if="recordCtrl.role == 'Doctor'">
+                                <td ng-if="recordCtrl.role == 'D'">
                                     {{patient.name}}
                                     <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
                                 </td>
-                                <td ng-if="recordCtrl.role == 'Receptionist'">
+                                <td ng-if="recordCtrl.role == 'R'">
                                     {{patient.name}}
                                     <small class="text-muted d-block d-lg-none">{{patient.email}}</small>
                                 </td>
-                                <td class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Doctor'">{{patient.email}}</td>
-                                <td class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'Receptionist'">{{patient.email}}</td>
-                                <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Receptionist'">{{patient.doctor}}</td>
-                                <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'Patient'">{{patient.doctor}}</td>
+                                <td class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'D'">{{patient.email}}</td>
+                                <td class="d-none d-lg-table-cell" ng-if="recordCtrl.role == 'R'">{{patient.email}}</td>
+                                <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'R'">{{patient.doctor}}</td>
+                                <td class="d-none d-md-table-cell" ng-if="recordCtrl.role == 'P'">{{patient.doctor}}</td>
                                 <td>{{patient.preferred_date | date: 'mediumDate'}}</td>
                                 <td class="d-none d-lg-table-cell">
                                     <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{patient.reason}}">
@@ -91,6 +92,11 @@
                                     <span class="badge" ng-class="{'bg-warning ': patient.status === 'Pending', 'bg-success text-white': patient.status === 'Approved', 'bg-danger text-white': patient.status === 'Rejected'}">
                                         {{patient.status}}
                                     </span>
+                                </td>
+                                <td>
+                                    <button ng-if="patient.visited_recep === false" class="btn btn-sm btn-outline-danger" ng-click="recordCtrl.deleteAppointment(patient.id)">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>

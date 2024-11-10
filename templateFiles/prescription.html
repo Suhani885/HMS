@@ -2,9 +2,9 @@
     <h1 class="display-5 fw-bold text-center mb-5">All Prescriptions</h1>
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10 col-xl-8">
-            <div class="card shadow-sm" ng-repeat="prescription in presCtrl.pres" >
+            <div class="card shadow-sm mb-4 " ng-repeat="prescription in presCtrl.pres" >
                 <div class="card-header bg-primary text-white py-3">
-                    <h1 class="h3 mb-0 text-center">Appointment ID: {{prescription.appointment_id}}</h1>
+                    <h1 class="h5 mb-0 text-center">Date: {{prescription.date | date:'mediumDate'}}</h1>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mt-2">
@@ -58,3 +58,91 @@
     </div>
 </div>
 
+<!-- <div ng-controller="presController as presCtrl" class="bg-light container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <h1 class="h3 mb-0 text-center">All Prescriptions</h1>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action" ng-repeat="prescription in presCtrl.pres" ng-click="presCtrl.openModal(prescription)">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Appointment ID: {{prescription.appointment_id}}</h5>
+                                <small>{{prescription.date | date:'mediumDate'}}</small>
+                            </div>
+                            <p class="mb-1">Doctor: {{prescription.doctor_name}}</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="prescriptionModal" tabindex="-1" aria-labelledby="prescriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="prescriptionModalLabel">Prescription</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Appointment ID: {{presCtrl.selectedPrescription.appointment_id}}</h5>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <h6>Date: {{presCtrl.selectedPrescription.date | date:'mediumDate'}}</h6>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Doctor:</h6>
+                                <p>{{presCtrl.selectedPrescription.doctor_name}}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Patient:</h6>
+                                <p>{{presCtrl.selectedPrescription.patient_name}}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Diagnosis:</h6>
+                                <p>{{presCtrl.selectedPrescription.diagnosis}}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Instructions:</h6>
+                                <p>{{presCtrl.selectedPrescription.instruction}}</p>
+                            </div>
+                        </div>
+                        <h6 class="text-secondary mb-3">Prescribed Medicines:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Medicine</th>
+                                        <th>Dosage</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="medicine in presCtrl.selectedPrescription.medicine">
+                                        <td>{{medicine.medicine}}</td>
+                                        <td>{{medicine.dosage}}</td>
+                                        <td>{{medicine.days}} days</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="presCtrl.savePDF()">Save as PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

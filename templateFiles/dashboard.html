@@ -3,7 +3,7 @@
         <div class="text-center mb-5">
             <h2 class="display-4 fw-bold">Dashboard</h2>
         </div>
-        <div class="row g-4 mb-4" ng-if="dashCtrl.stats.role == 'Receptionist'">
+        <div class="row g-4 mb-4" ng-if="dashCtrl.stats.role == 'R'">
             <div class="col-sm-6 col-lg-4">
                 <div class="card h-100">
                     <div class="card-body text-center">
@@ -31,7 +31,7 @@
         </div>
 
         <div class="row g-4 justify-content-center align-items-center" >
-            <div class="col-md-8 " ng-if="dashCtrl.stats.role == 'Doctor'">
+            <div class="col-md-8 " ng-if="dashCtrl.stats.role == 'D'">
                 <div class="card">
                     <div class="card-body">
                         <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
@@ -41,14 +41,14 @@
                     <h3 class="display-5 font-weight-bold">Total Appointments: {{dashCtrl.stats.total_appointment}}</h3>
                 </div>
             </div>
-            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'Receptionist'">
+            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'R'">
                 <div class="card">
                     <div class="card-body">
                         <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'Receptionist'">
+            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'R'">
                 <div class="card">
                     <div class="card-body">
                         <div id="registrationChartContainer" style="height: 300px; width: 100%;"></div>
@@ -56,10 +56,10 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid" ng-if="dashCtrl.stats.role == 'Patient'">
+        <div class="container-fluid" ng-if="dashCtrl.stats.role == 'P'">
             <div class="row g-4 mb-4 justify-content-center align-items-center">
                 <div class="col-sm-8 col-lg-10">
-                    <div class="card h-100">
+                    <div class="bg-light">
                         <div class="card-body text-center">
                             <h4 class="card-title display-5">Total Appointments : {{dashCtrl.stats.number}}</h4>
                         </div>
@@ -67,15 +67,12 @@
                 </div>
                 <div class="col-sm-8 col-lg-10 mt-4">
                     <div class="card h-100">
-                        <h4 class="card-header text-center p-4">Recent Prescription</h4>
+                        <h4 class="card-header text-center p-4">Your Recent Prescription</h4>
                         <div class="card-body">
                             <div ng-repeat="prescription in dashCtrl.pres" class="mb-4">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <h5 class="text-primary">Appointment ID: {{prescription.appointment_id}}</h5>
-                                    </div>
-                                    <div class="col-md-6 text-md-end">
-                                        <h6>Date: {{prescription.date | date:'mediumDate'}}</h6>
+                                        <h5 class="text-primary">Date: {{prescription.date | date:'mediumDate'}}</h5>
                                     </div>
                                 </div>
                                 <hr>

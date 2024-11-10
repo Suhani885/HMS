@@ -22,7 +22,7 @@
                                 <button class="btn btn-sm btn-outline-primary" ng-click="patientCtrl.openPrescriptionModal(patient)" ng-if="patient.is_prescribed == false">
                                     <i class="bi bi-pencil-square"></i> Give Prescription
                                 </button>
-                                <button class="btn btn-sm btn-outline-primary" ng-click="patientCtrl.viewPrescriptionModal(patient)" ng-if="patient.is_prescribed == true">
+                                <button class="btn btn-sm btn-outline-success" ng-click="patientCtrl.viewPrescriptionModal(patient)" ng-if="patient.is_prescribed == true">
                                     <i class="bi bi-eye"></i> View Prescription
                                 </button>
                             </div>
@@ -60,7 +60,7 @@
                                     <input type="text" autocomplete="on" class="form-control" ng-model="medicine.dosage" required>
                                 </div>
                                 <div class="col-auto d-flex align-items-end">
-                                    <button type="button" class="btn btn-danger" ng-click="patientCtrl.prescription.medicines.splice($index, 1)" ng-if="!$first">Remove</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" ng-click="patientCtrl.prescription.medicines.splice($index, 1)" ng-if="!$first">Remove</button>
                                 </div>
                             </div>
                         </div>

@@ -1,18 +1,18 @@
 <div ng-controller="allController as allCtrl">
     <div class="container-fluid py-1">
         <h1 class="display-4 fw-bold text-center mb-3">All Patients</h1>
-        <div class="row row-cols-1 row-cols-lg-2 row-cols-md-1 row-cols-xl-3 g-4">
-            <div class="col mb-5" ng-repeat="detail in allCtrl.details" >
-                <div class="card h-100 shadow-sm border-0 rounded-3 patient-card" style="overflow: scroll;">
-                    <div class="card-body p-5">
-                        <div class="d-flex align-items-center mb-3">
+        <div class="row row-cols-1 row-cols-lg-2 row-cols-md-1 row-cols-xl-2 g-4">
+            <div class="col mb-3" ng-repeat="detail in allCtrl.details" >
+                <div class="card h-100 shadow-sm border-0 patient-card" style="overflow: scroll;">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-2">
                             <img ng-src="{{allCtrl.getImageUrl(detail.image)}}" class="rounded-circle ml-2 mb-3" alt="Profile picture" width="100" height="100" style="object-fit: cover;">
                             <div>
                                 <h5 class="card-title mb-0">{{detail.first_name}} {{detail.last_name}}</h5>
                                 <p class="text-muted mb-0">{{detail.email}}</p>
                             </div>
                         </div>
-                        <div class="row g-2 mb-3">
+                        <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <p class="mb-0"><small class="text-muted">Phone:</small></p>
                                 <p class="mb-0">{{detail.phone_number}}</p>
@@ -26,7 +26,7 @@
                                 <p class="mb-0">{{detail.gender}}</p>
                             </div>
                         </div>
-                        <div class="row g-2 mb-3">
+                        <div class="row g-2 mb-2">
                             <div class="col-4">
                                 <p class="mb-0"><small class="text-muted">Height:</small></p>
                                 <p class="mb-0">{{detail.height}} cm</p>
@@ -41,7 +41,7 @@
                             </div>
                         </div>
                         <p class="mb-1"><small class="text-muted">Medical History:</small></p>
-                        <p class="mb-3">{{detail.medical_history}}</p>
+                        <p class="mb-2">{{detail.medical_history}}</p>
                         <p class="mb-1"><small class="text-muted">Address:</small></p>
                         <p class="mb-0">{{detail.address}}</p>
                     </div>
