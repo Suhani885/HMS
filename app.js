@@ -1,5 +1,25 @@
 const app = angular.module('app', ['ui.router','ui.bootstrap']);
-var baseUrl = 'https://10.21.98.200:8888';
+var baseUrl = 'https://10.21.98.164:8888';
+
+// var options = {
+//     "key": "YOUR_KEY_ID",
+//     "amount": "2000", // 2000 paise = INR 20
+//     "name": "VitalCure",
+//     "handler": function (response){
+//         alert(response.razorpay_payment_id);
+//         // do an ajax call to backend and capture and verify the payment then 
+//           //redirect to payment success page.
+//     },
+//     "theme": {
+//         "color": "#F37254"
+//     }
+// };
+// var rzp1 = new Razorpay(options);
+
+// document.getElementById('rzp-button1').onclick = function(e){
+//     rzp1.open();
+//     e.preventDefault();
+// }
 
 app.service('loaderService', function() {
     this.isLoading = false;
@@ -39,6 +59,65 @@ app.run(function($rootScope, loaderService) {
         loaderService.hide();
     });
 });
+
+app.service("api_request", ["$http", "$state", function($http, $state) {
+    
+    this.get_withdata = function(path, callback) {
+        var req = {
+            method: 'GET',
+            url: `${baseUrl}/${path}`,
+            withCredentials: true
+        };
+        $http(req).then(function(response) {
+            callback(response.data);
+        }, function(err) {
+            console.log("Error:", err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: err.data.error || "An unexpected error occurred. Please try again!"
+            });
+        });
+    };
+
+    this.post_withdata = function(path, data, callback) {
+        var req = {
+            method: 'POST',
+            url: `${baseUrl}/${path}`,
+            data: data,
+            withCredentials: true
+        };
+        $http(req).then(function(response) {
+            callback(response.data);
+        }, function(err) {
+            console.log("Error:", err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: err.data.error || "An unexpected error occurred. Please try again!"
+            });
+        });
+    };
+
+    this.patch_withdata = function(path, data, callback) {
+        var req = {
+            method: 'PATCH',
+            url: `${baseUrl}/${path}`,
+            data: data,
+            withCredentials: true
+        };
+        $http(req).then(function(response) {
+            callback(response.data);
+        }, function(err) {
+            console.log("Error:", err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: err.data.error || "An unexpected error occurred. Please try again!"
+            });
+        });
+    };
+}]);
 
 app.config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider) {
     $urlRouterProvider.otherwise('/landing');
@@ -130,7 +209,7 @@ app.config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider,
 
 }]);
 
-app.controller('pRegController', ['$http', '$state', 'loaderService', function ($http, $state, loaderService) {
+app.controller('pRegController', ['$http', '$state', 'api_request', function ($http, $state, api_request) {
     var pRegCtrl = this;
     pRegCtrl.bgs=[];
 
@@ -139,16 +218,12 @@ app.controller('pRegController', ['$http', '$state', 'loaderService', function (
     };
 
     pRegCtrl.fetchbgs = function() {
-        $http.get(`${baseUrl}/vitalcure/list_bg/`)
-            .then(function(response) {
-                pRegCtrl.bgs = response.data.list;
-            }, function(error) {
-                console.log("Error fetching specializations:", error);
-            });
+        api_request.get_withdata('vitalcure/list_bg/', function(response) {
+            pRegCtrl.bgs = response.list;
+        });
     };
-
+    
     pRegCtrl.Register = function() {
-        loaderService.show();
         console.log(pRegCtrl.email,pRegCtrl.pass1, pRegCtrl.pass2);
         if (pRegCtrl.pass1 !== pRegCtrl.pass2) {
             Swal.fire({
@@ -194,7 +269,6 @@ app.controller('pRegController', ['$http', '$state', 'loaderService', function (
                 $state.go('login');
             });
         }, function(error) {
-            loaderService.hide();
             console.log("error", error);
             Swal.fire({
                 icon: 'error',
@@ -207,7 +281,7 @@ app.controller('pRegController', ['$http', '$state', 'loaderService', function (
     pRegCtrl.fetchbgs();
 }]);
 
-app.controller('docRegController', ['$http', '$state','loaderService', function ($http, $state, loaderService) {
+app.controller('docRegController', ['$http', '$state','api_request', function ($http, $state, api_request) {
     var docRegCtrl = this;
     docRegCtrl.specialists = [];
 
@@ -216,7 +290,6 @@ app.controller('docRegController', ['$http', '$state','loaderService', function 
     };
 
     docRegCtrl.Register = function() {
-        loaderService.show();
         console.log(docRegCtrl.email,docRegCtrl.pass1, docRegCtrl.pass2);
         if (docRegCtrl.pass1 !== docRegCtrl.pass2) {
             Swal.fire({
@@ -260,7 +333,6 @@ app.controller('docRegController', ['$http', '$state','loaderService', function 
                 $state.go('login');
             });
         }, function(error) {
-            loaderService.hide();
             console.log("error", error);
             Swal.fire({
                 icon: 'error',
@@ -271,79 +343,48 @@ app.controller('docRegController', ['$http', '$state','loaderService', function 
     };
 
     docRegCtrl.fetchSpecialization = function() {
-        $http.get(`${baseUrl}/vitalcure/list_specialisation/`)
-            .then(function(response) {
-                loaderService.hide();
-                docRegCtrl.specialists = response.data.list;
-            }, function(error) {
-                loaderService.hide();
-                console.log("Error fetching doctors:", error);
-            });
+        api_request.get_withdata('vitalcure/list_specialisation/', function(response) {
+            docRegCtrl.specialists = response.list;
+        });
     };
+
     docRegCtrl.fetchSpecialization();
 }]);
 
-app.controller('appointController', ['$http', '$state', function($http) {
+app.controller('appointController', ['$http', '$state','api_request', function($http,api_request) {
     var appointCtrl = this;
     appointCtrl.specialists = [];
     appointCtrl.doctors = [];
 
     appointCtrl.fetchSpecialization = function() {
-        $http.get(`${baseUrl}/vitalcure/list_specialisation/`)
-            .then(function(response) {
-                appointCtrl.specialists = response.data.list;
-            }, function(error) {
-                console.log("Error fetching specializations:", error);
-            });
+        api_request.get_withdata('vitalcure/list_specialisation/', function(response) {
+            appointCtrl.specialists = response.list;
+        });
     };
 
     appointCtrl.appointment = function() {
-        var req = {
-            method: 'POST',
-            url: `${baseUrl}/vitalcure/appointment_schedule/`,
-            data: {
-                "doctor_selected": appointCtrl.doc,
-                "reason": appointCtrl.reason,
-                "symptoms": appointCtrl.symptom,
-                "speciality": appointCtrl.specialist,
-                "preferred_date": appointCtrl.date
-            },
-            withCredentials: true 
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
+        api_request.post_withdata('vitalcure/appointment_schedule/', {
+            "doctor_selected": appointCtrl.doc,
+            "reason": appointCtrl.reason,
+            "symptoms": appointCtrl.symptom,
+            "speciality": appointCtrl.specialist,
+            "preferred_date": appointCtrl.date
+        }, function(response) {
             console.log(response);
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: response.data.message
+                text: response.message
             })
             appointCtrl.resetForm();
-        }, function(error) {
-            loaderService.hide();
-            console.log("error", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Appointment Scheduling Failed',
-                text: error.data.error || "An unexpected error occurred. Please try again!"
-            });
         });
     };
 
     appointCtrl.fetchDocs = function(specialist) {
-        var req = {
-            method: 'POST',
-            url: `${baseUrl}/vitalcure/spec_doctor/`,
-            data: {
-                "specialisation": specialist
-            },
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            console.log(response);
-            appointCtrl.doctors = response.data.list; 
-        }, function(error) {
-            console.error('Error fetching doctors:', error);
+        api_request.post_withdata('vitalcure/spec_doctor/', {
+            "specialisation": specialist
+        }, function(response) {
+            appointCtrl.doctors = response.list;
         });
     };
 
@@ -359,67 +400,37 @@ app.controller('appointController', ['$http', '$state', function($http) {
     appointCtrl.fetchSpecialization();
 }]);
 
-app.controller('LoginController',['$http', '$state','loaderService', function ($http, $state,loaderService) {
+app.controller('LoginController',['$http', '$state','api_request', function ($http, $state,api_request) {
     var loginCtrl = this;
     loginCtrl.email = '';
     loginCtrl.password = '';
 
     loginCtrl.login = function() {
-        loaderService.show();
-        console.log(loginCtrl.email, loginCtrl.password);
-        if (loginCtrl.email && loginCtrl.password) {
-            var req = {
-                method: 'POST',
-                url: `${baseUrl}/vitalcure/login_user/`,
-                withCredentials: true,
-                headers: {
-                    'Content-Type': "application/json"
-                },
-                data: {
-                    "email": loginCtrl.email,
-                    "password": loginCtrl.password
-                }
-            };
-
-            $http(req).then(function(response) {
-                loaderService.hide();
-                console.log(response);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.data.message
-                }).then(() => {
-                    $state.go('user');
-                });
-            }, function(error) { 
-                loaderService.hide();
-                console.log("error", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Login Failed',
-                    text: error.data.error
-                });
+        api_request.post_withdata('vitalcure/login_user/', {
+            "email": loginCtrl.email,
+            "password": loginCtrl.password
+        }, function(response) {
+            console.log(response);
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: response.message
+            }).then(() => {
+                $state.go('user');
             });
-        } 
-    };
-    loginCtrl.checkSession = function() {
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/login_user/`,
-            withCredentials: true
-        };
-
-        $http(req).then(function(response) {
-            console.log("Session check:", response);
-            route=response.data.url;
-        }, function(error) {
-            console.log("Session check failed", error);
         });
     };
+    loginCtrl.checkSession = function() {
+        api_request.get_withdata('vitalcure/login_user/', function(response) {
+            console.log("Session check:", response);
+            $state.go(response.url);
+        });
+    };
+
     loginCtrl.checkSession();
 }]);
 
-app.controller('LandingController', ['$http', 'loaderService', function ($http,loaderService) {
+app.controller('LandingController', ['$http', 'api_request', function($http, api_request) {
     var landingCtrl = this;
     landingCtrl.details = [];
 
@@ -428,21 +439,15 @@ app.controller('LandingController', ['$http', 'loaderService', function ($http,l
     };
 
     landingCtrl.fetchDoctors = function() {
-        loaderService.show();
-        $http.get(`${baseUrl}/vitalcure/list_doctors/`)
-            .then(function(response) {
-                loaderService.hide();
-                landingCtrl.details = response.data.details;
-            }, function(error) {
-                loaderService.hide();
-                console.log("Error fetching doctors:", error);
-            });
+        api_request.get_withdata('vitalcure/list_doctors/', function(response) {
+            landingCtrl.details = response.details;
+        });
     };
 
     landingCtrl.fetchDoctors();
 }]);
 
-app.controller('docController', ['$http', 'loaderService', function ($http,loaderService) {
+app.controller('docController', ['$http', 'api_request', function($http, api_request) {
     var docCtrl = this;
     docCtrl.details = [];
 
@@ -451,21 +456,15 @@ app.controller('docController', ['$http', 'loaderService', function ($http,loade
     };
 
     docCtrl.fetchDoctors = function() {
-        loaderService.show();
-        $http.get(`${baseUrl}/vitalcure/list_doctors/`)
-            .then(function(response) {
-                loaderService.hide();
-                docCtrl.details = response.data.details;
-            }, function(error) {
-                loaderService.hide();
-                console.log("Error fetching doctors:", error);
-            });
+        api_request.get_withdata('vitalcure/list_doctors/', function(response) {
+            docCtrl.details = response.details;
+        });
     };
 
     docCtrl.fetchDoctors();
 }]);
 
-app.controller('allController', ['$http', 'loaderService', function ($http,loaderService) {
+app.controller('allController', ['$http', 'api_request', function($http, api_request) {
     var allCtrl = this;
     allCtrl.details = [];
 
@@ -474,21 +473,15 @@ app.controller('allController', ['$http', 'loaderService', function ($http,loade
     };
 
     allCtrl.fetchPatients = function() {
-        loaderService.show();
-        $http.get(`${baseUrl}/vitalcure/list_patients/`)
-            .then(function(response) {
-                loaderService.hide();
-                allCtrl.details = response.data.details;
-            }, function(error) {
-                loaderService.hide();
-                console.log("Error fetching doctors:", error);
-            });
+        api_request.get_withdata('vitalcure/list_patients/', function(response) {
+            allCtrl.details = response.details;
+        });
     };
 
     allCtrl.fetchPatients();
 }]);
 
-app.controller('userController', ['$http', '$state', 'loaderService', function ($http, $state, loaderService) {
+app.controller('userController', ['$http', '$state', 'api_request', function($http, $state, api_request) {
     var userCtrl = this;
     userCtrl.navs = [];
     userCtrl.details = [];
@@ -502,7 +495,6 @@ app.controller('userController', ['$http', '$state', 'loaderService', function (
     };
 
     userCtrl.logout = function() {
-        loaderService.show();
         Swal.fire({
             title: 'Are you sure?',
             text: "You're about to log out!",
@@ -513,13 +505,7 @@ app.controller('userController', ['$http', '$state', 'loaderService', function (
             confirmButtonText: 'Yes, log out!'
         }).then((result) => {
             if (result.isConfirmed) {
-                var req = {
-                    method: 'GET',
-                    url: `${baseUrl}/vitalcure/logout_user/`,
-                    withCredentials: true
-                };
-                $http(req).then(function(response) {
-                    loaderService.hide();
+                api_request.get_withdata('vitalcure/logout_user/', function(response) {
                     console.log(response);
                     Swal.fire(
                         'Logged Out!',
@@ -528,34 +514,16 @@ app.controller('userController', ['$http', '$state', 'loaderService', function (
                     ).then(() => {
                         $state.go('landing');
                     });
-                }, function(error) {
-                    loaderService.hide();
-                    console.log("error", error);
-                    Swal.fire(
-                        'Error!',
-                        error.data.message || 'Failed to log out. Please try again!',
-                        'error'
-                    );
                 });
             }
         });
     };
 
     userCtrl.fetchNav = function() {
-        loaderService.show();
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/view_panel/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
+        api_request.get_withdata('vitalcure/view_panel/', function(response) {
             console.log("Navbar elements:", response);
-            userCtrl.navs = response.data.panel;
-            userCtrl.details = response.data.details;
-        }, function(error) {
-            loaderService.hide();
-            console.log("Error", error);
+            userCtrl.navs = response.panel;
+            userCtrl.details = response.details;
         });
     };
 
@@ -563,32 +531,22 @@ app.controller('userController', ['$http', '$state', 'loaderService', function (
     userCtrl.fetchNav();
 }]);
 
-app.controller('dashController',['$http','loaderService', function($http,loaderService) {
+app.controller('dashController',['$http','api_request', function($http,api_request) {
     var dashCtrl = this;
     dashCtrl.stats = {};
     dashCtrl.pres=[];
 
     dashCtrl.fetchDashboardStats = function() {
-        loaderService.show();
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/stats/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
+        api_request.get_withdata('vitalcure/stats/', function(response) {
             console.log("Dashboard stats:", response);
-            if (response.data.details && response.data.details.length > 0) {
-                dashCtrl.stats = response.data.details[0];
-                dashCtrl.pres = response.data.details;
+            if (response.details && response.details.length > 0) {
+                dashCtrl.stats = response.details[0];
+                dashCtrl.pres = response.details;
                 dashCtrl.renderAppointmentChart();
                 dashCtrl.renderRegistrationChart();
             } else {
                 console.log("No data available in the response");
             }
-        }, function(error) {
-            loaderService.hide();
-            console.log("Error fetching dashboard stats", error);
         });
     };
 
@@ -638,86 +596,49 @@ app.controller('dashController',['$http','loaderService', function($http,loaderS
     dashCtrl.fetchDashboardStats();
 }]);
 
-app.controller('profileController', ['$http','loaderService', function($http,loaderService) {
+app.controller('profileController', ['$http', 'api_request', function($http, api_request) {
     var profileCtrl = this;
     profileCtrl.users = [];
 
     profileCtrl.fetchUserProfile = function() {
-        loaderService.show();
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/profile_details/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
+        api_request.get_withdata('vitalcure/profile_details/', function(response) {
             console.log("User profile:", response);
-            profileCtrl.users = response.data.profile;
-        }, function(error) {
-            loaderService.hide();
-            console.log("Error fetching user profile", error);
+            profileCtrl.users = response.profile;
         });
     };
 
     profileCtrl.fetchUserProfile();
 }]);
 
-app.controller('statusController', ['$http','loaderService', function($http,loaderService) {
+app.controller('statusController', ['$http', 'api_request', function($http, api_request) {
     var statusCtrl = this;
     statusCtrl.appointments = [];
     statusCtrl.details = [];
-    statusCtrl.role={};
+    statusCtrl.role = {};
 
     statusCtrl.fetchAppointments = function() {
-        loaderService.show();
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/list_appoint/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
+        api_request.get_withdata('vitalcure/list_appoint/', function(response) {
             console.log(response);
-            statusCtrl.appointments = response.data.list;
-            statusCtrl.role=response.data.role;
-        }, function(error) {
-            loaderService.hide();
-            console.error('Error fetching appointments:', error);
+            statusCtrl.appointments = response.list;
+            statusCtrl.role = response.role;
         });
     };
 
     statusCtrl.approve = function(appointment) {
-        loaderService.show();
-        var req = {
-            method: 'PATCH',
-            url: `${baseUrl}/vitalcure/approve_status/`,
-            data: {
-                "id": appointment.id
-            },
-            withCredentials: true 
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
+        api_request.patch_withdata('vitalcure/approve_status/', {
+            "id": appointment.id
+        }, function(response) {
             console.log(response);
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: response.data.message
+                text: response.message
             });
             statusCtrl.fetchAppointments();
-        }, function(error) {
-            loaderService.hide();
-            console.log("error", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.data.error || "An unexpected error occurred!"
-            });
         });
     };
 
     statusCtrl.reject = function(appointmentId) {
-        loaderService.show();
         Swal.fire({
             title: 'Rejection Reason',
             input: 'text',
@@ -731,31 +652,16 @@ app.controller('statusController', ['$http','loaderService', function($http,load
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                var req = {
-                    method: 'PATCH',
-                    url: `${baseUrl}/vitalcure/reject_appoint/`,
-                    data: {
-                        "id": appointmentId,
-                        "remark": result.value
-                    },
-                    withCredentials: true 
-                };
-                $http(req).then(function(response) {
-                    loaderService.hide();
+                api_request.patch_withdata('vitalcure/reject_appoint/', {
+                    "id": appointmentId,
+                    "remark": result.value
+                }, function(response) {
                     console.log(response);
                     Swal.fire({
                         icon: 'success',
-                        text: response.data.message
+                        text: response.message
                     });
-                    statusCtrl.fetchAppointments(); 
-                }, function(error) {
-                    loaderService.hide();
-                    console.log("error", error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: error.data.error || "An unexpected error occurred!"
-                    });
+                    statusCtrl.fetchAppointments();
                 });
             }
         });
@@ -764,7 +670,7 @@ app.controller('statusController', ['$http','loaderService', function($http,load
     statusCtrl.fetchAppointments();
 }]);
 
-app.controller('patientController', ['$http','loaderService', function($http,loaderService) {
+app.controller('patientController', ['$http','api_request', function($http,api_request) {
     var patientCtrl = this;
     patientCtrl.patients = [];
     patientCtrl.pres = [];
@@ -772,51 +678,20 @@ app.controller('patientController', ['$http','loaderService', function($http,loa
     patientCtrl.prescription = {};
 
     patientCtrl.fetchAppointments = function() {
-        loaderService.show();
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/doc_pat/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
+        api_request.get_withdata('vitalcure/doc_pat/', function(response) {
             console.log("Appointments:", response);
-            patientCtrl.patients = response.data.details;
-        }, function(error) {
-            loaderService.hide();
-            console.log("Error fetching approved appointments", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: "Failed to fetch appointments. Please try again."
-            });
+            patientCtrl.patients = response.details;
         });
     };
 
     patientCtrl.viewPrescriptionModal = function(patient) {
         patientCtrl.selectedPatient = patient;
-        loaderService.show();
-        var req = {
-            method: 'POST',
-            url: `${baseUrl}/vitalcure/list_doc_pres/`,
-            data: {
-                "appointment_id": patient.id
-            },
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            loaderService.hide();
-            patientCtrl.pres = response.data.list;
+        api_request.post_withdata('vitalcure/list_doc_pres/', {
+            "appointment_id": patient.id
+        }, function(response) {
+            patientCtrl.pres = response.list;
             var viewPrescriptionModal = new bootstrap.Modal(document.getElementById('viewPrescriptionModal'));
             viewPrescriptionModal.show();
-        }, function(error) {
-            loaderService.hide();
-            console.log("error", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: "Failed to fetch prescription. Please try again."
-            });
         });
     };
 
@@ -836,7 +711,6 @@ app.controller('patientController', ['$http','loaderService', function($http,loa
     };
 
     patientCtrl.submitPrescription = function() {
-        loaderService.show();
         var prescriptionData = {
             "appointment_id": patientCtrl.selectedPatient.id,
             "diagnosis": patientCtrl.prescription.diagnosis,
@@ -852,17 +726,15 @@ app.controller('patientController', ['$http','loaderService', function($http,loa
             withCredentials: true
         };
         $http(req).then(function(response) {
-            loaderService.hide();
             console.log("Prescription submitted:", response);
             Swal.fire({
                 icon: 'success',
                 text: response.data.message
             });
             var prescriptionModal = bootstrap.Modal.getInstance(document.getElementById('prescriptionModal'));
-            prescriptionModal.hide();
             patientCtrl.fetchAppointments(); 
+            prescriptionModal.hide();
         }, function(error) {
-            loaderService.hide();
             console.log("Error submitting prescription", error);
             Swal.fire({
                 icon: 'error',
@@ -875,7 +747,7 @@ app.controller('patientController', ['$http','loaderService', function($http,loa
     patientCtrl.fetchAppointments();
 }]);
 
-app.controller('recordController', ['$http', function($http) {
+app.controller('recordController', ['$http','api_request', function($http,api_request) {
     var recordCtrl = this;
     recordCtrl.all = [];
     recordCtrl.role = {};
@@ -883,46 +755,24 @@ app.controller('recordController', ['$http', function($http) {
     recordCtrl.searchResults = [];
 
     recordCtrl.fetchAll = function() {
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/records/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
-            recordCtrl.all = response.data.details;
-            recordCtrl.role = response.data.role;
+        api_request.get_withdata('vitalcure/records/', function(response) {
+            recordCtrl.all = response.details;
+            recordCtrl.role = response.role;
             recordCtrl.search();
-        }, function(error) {
-            console.error('Error fetching records:', error);
         });
     };
 
     recordCtrl.deleteAppointment = function(patientId) {
         if (confirm('Are you sure you want to delete this appointment?')) {
-            var req = {
-                method: 'PATCH',
-                url: `${baseUrl}/vitalcure/delete_appointment/`,
-                data: {
-                    "id": patientId,
-                },
-                withCredentials: true
-            };
-            $http(req).then(function(response) {
-                loaderService.hide();
+            api_request.patch_withdata('vitalcure/delete_appointment/', {
+                "id": patientId,
+            }, function(response) {
                 console.log(response);
                 Swal.fire({
                     icon: 'success',
-                    text: response.data.message
+                    text: response.message
                 });
                 recordCtrl.fetchAll();
-            }, function(error) {
-                loaderService.hide();
-                console.log("error", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.data.error || "An unexpected error occurred!"
-                });
             });
         }
     };
@@ -972,27 +822,24 @@ app.controller('recordController', ['$http', function($http) {
     recordCtrl.fetchAll();
 }]);
 
-app.controller('presController', ['$http','$window',function($http,$window) {
+app.controller('presController', ['$http','$window','api_request', function($http,$window,api_request) {
     var presCtrl = this;
     presCtrl.pres = [];
 
     presCtrl.fetchPrescriptions = function() {
-        var req = {
-            method: 'GET',
-            url: `${baseUrl}/vitalcure/list_pres/`,
-            withCredentials: true
-        };
-        $http(req).then(function(response) {
+        api_request.get_withdata('vitalcure/list_pres/', function(response) {
             presCtrl.pres = response.data.list;
-        }, function(error) {
-            console.error('Error fetching:', error);
         });
     };
-    presCtrl.fetchPrescriptions();
 
     presCtrl.printRecords = function() {
         $window.print();
     };
 
+    presCtrl.fetchPrescriptions();
+
 }]); 
+
+
+
 
