@@ -1,0 +1,222 @@
+<div ng-controller="patientController as patientCtrl">
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <h1 class="display-5 fw-bold">Scheduled Appointments</h1>
+                        <p class="lead text-muted">Manage patient appointments and prescriptions</p>
+                    </div>
+                </div>
+
+                 <!-- Filter -->
+                 <div class="row mb-4">
+                    <div class="col-md-4">
+                        <select class="form-select" ng-model="patientCtrl.filterStatus">
+                            <option value="">All Appointments</option>
+                            <option value="true">Prescribed</option>
+                            <option value="false">Not Prescribed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Appointment Cards -->
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    <div class="col mb-4"  ng-repeat="patient in patientCtrl.patients | filter:patientCtrl.searchQuery | filter:{is_prescribed: patientCtrl.filterStatus}">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">{{patient.name}}</h5>
+                                <span class="badge" ng-class="{'bg-success text-white': patient.is_prescribed, 'bg-warning text-dark': !patient.is_prescribed}">
+                                    {{patient.is_prescribed ? 'Prescribed' : 'Pending'}}
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text"><strong>Appointment ID:</strong> {{patient.id}}</p>
+                                <p class="card-text"><strong>Email:</strong> {{patient.email}}</p>
+                                <p class="card-text"><strong>Date:</strong> {{patient.date_of_appointment | date: 'mediumDate'}}</p>
+                                <p class="card-text"><strong>Reason:</strong> {{patient.reason}}</p>
+                                <p class="card-text"><strong>Symptom:</strong> {{patient.symptoms}}</p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <button class="btn btn-primary w-100" ng-click="patientCtrl.openPrescriptionModal(patient)" ng-if="patient.is_prescribed == false">
+                                    <i class="bi bi-clipboard2-plus"></i> Give Prescription
+                                </button>
+                                <button class="btn btn-primary w-100" ng-click="patientCtrl.viewPrescriptionModal(patient)" ng-if="patient.is_prescribed == true">
+                                    <i class="bi bi-eye"></i> View Prescription
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Prescription Modal -->
+    <div class="modal fade" id="prescriptionModal" tabindex="-1" aria-labelledby="prescriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="prescriptionModalLabel">
+                        <i class="bi bi-clipboard2-pulse"></i> 
+                        Give Prescription for {{patientCtrl.selectedPatient.name}}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form ng-submit="patientCtrl.submitPrescription()">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Patient Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Name:</strong> {{patientCtrl.selectedPatient.name}}</p>
+                                        <p><strong>Appointment ID:</strong> {{patientCtrl.selectedPatient.id}}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Date:</strong> {{patientCtrl.selectedPatient.date_of_appointment | date: 'mediumDate'}}</p>
+                                        <p><strong>Symptoms:</strong> {{patientCtrl.selectedPatient.symptoms}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label">
+                                <i class="bi bi-clipboard2-data"></i> Diagnosis
+                            </label>
+                            <input type="text" class="form-control" id="diagnosis" ng-model="patientCtrl.prescription.diagnosis" required>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0"><i class="bi bi-capsule"></i> Medicines</h6>
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="patientCtrl.addMedicine()">
+                                    <i class="bi bi-plus-circle"></i> Add Medicine
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div ng-repeat="medicine in patientCtrl.prescription.medicines" class="mb-3 p-3 border rounded">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Medicine Name</label>
+                                            <input type="text" class="form-control" ng-model="medicine.name" placeholder="Enter medicine name" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Duration (days)</label>
+                                            <input type="number" class="form-control" ng-model="medicine.days" min="1" placeholder="Days" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Dosage</label>
+                                            <input type="text" class="form-control" ng-model="medicine.dosage" placeholder="Ex: 1-0-1" required>
+                                        </div>
+                                        <div class="col-md-1 d-flex align-items-end">
+                                            <button type="button" class="btn btn-outline-danger" ng-click="patientCtrl.prescription.medicines.splice($index, 1)" ng-if="patientCtrl.prescription.medicines.length > 1">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="instructions" class="form-label">
+                                <i class="bi bi-list-check"></i> Instructions
+                            </label>
+                            <textarea class="form-control" id="instructions" rows="3" ng-model="patientCtrl.prescription.instructions" placeholder="Enter specific instructions or recommendations for the patient"></textarea>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button> -->
+                            <button type="submit" class="btn btn-primary">
+                               Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Prescription Modal -->
+    <div class="modal fade" id="viewPrescriptionModal" tabindex="-1" aria-labelledby="viewPrescriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="viewPrescriptionModalLabel">
+                        <i class="bi bi-clipboard2-pulse"></i> 
+                        Prescription for {{patientCtrl.selectedPatient.name}}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <div ng-repeat="prescription in patientCtrl.pres" class="card mb-3">
+                        <div class="card-header bg-light">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="mb-0">Prescription Details</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p><strong><i class="bi bi-person"></i> Patient:</strong> {{patientCtrl.selectedPatient.name}}</p>
+                                   
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Diagnosis:</strong> {{prescription.diagnosis}}</p>
+                                </div>
+                            </div>
+                            
+                            <h6 class="card-title mt-4">
+                                <i class="bi bi-capsule"></i> <strong>Prescribed Medicines:</strong>
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>S.No.</th>
+                                            <th>Medicine</th>
+                                            <th>Dosage</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="medicine in prescription.medicine">
+                                            <td>{{$index + 1}}</td>
+                                            <td>{{medicine.medicine}}</td>
+                                            <td>{{medicine.dosage}}</td>
+                                            <td>{{medicine.days}} days</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6><i class="bi bi-list-check"></i> <strong>Instructions:</strong></h6>
+                                <div class="p-3 bg-light rounded">
+                                    {{prescription.instruction}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Close
+                    </button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  

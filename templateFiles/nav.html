@@ -15,14 +15,14 @@
                     
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
                         <li class="nav-item w-100 mb-2" ng-repeat="nav in userCtrl.navs">
-                            <a ui-sref="user.{{nav.url}}" class="nav-link px-0 align-middle text-dark " ng-class="{'active': userCtrl.isActive(nav.url)}">
-                                <i class="{{nav.icon}} mr-2" style="font-size:larger;"></i>
+                            <a ui-sref="user.{{nav.url}}" class="nav-link px-0 align-middle text-white" ng-class="{'active bg-primary text-white': userCtrl.isActive(nav.url), 'text-dark': !userCtrl.isActive(nav.url)}">
+                                <i class="{{nav.icon}} ml-2 mr-2" style="font-size:larger;"></i>
                                 <span class="ms-1 d-none d-sm-inline">{{nav.title}}</span>
                             </a>
                         </li>
                         <li class="nav-item w-100 mb-2">
                             <a ng-click="userCtrl.logout()" class="nav-link px-0 align-middle text-dark">
-                                <i class="bi bi-box-arrow-left mr-2 "></i>
+                                <i class="bi bi-box-arrow-left mr-2 ml-2"></i>
                                 <span class="ms-1 d-none d-sm-inline">Logout</span>
                             </a>
                         </li>
@@ -47,46 +47,4 @@
     </div>
 </div>
 
-<!-- <div ng-controller="userController as userCtrl">
-    <div class="container-fluid">
-        <div class="row flex-nowrap">
-            <nav class="col-2 col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-3 px-0 bg-light position-fixed h-100" style="overflow-y: auto;">
-                <div class="d-flex flex-column px-2 px-sm-3 pt-2 h-100">
-                    <div class="w-100 d-flex flex-column align-items-center text-center mb-4" ng-repeat="detail in userCtrl.details">
-                        <div class="position-relative mb-2 mb-sm-3 mt-2">
-                            <img ng-src="{{userCtrl.getImageUrl(detail.image)}}" 
-                                 class="rounded-circle" 
-                                 alt="Profile picture" 
-                                 width="60" 
-                                 height="60" 
-                                 style="object-fit: cover;"
-                                 class="img-fluid">
-                        </div>
-                        <div class="w-100 text-center">
-                            <h5 class="text-dark mb-1 fs-6 fs-sm-5">{{detail.name}}</h5>
-                            <p class="text-muted mb-3 small">{{detail.speciality}}</p>
-                        </div>
-                    </div>
-                    
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
-                        <li class="nav-item w-100 mb-2" ng-repeat="nav in userCtrl.navs">
-                            <a ui-sref="user.{{nav.url}}" 
-                               class="nav-link px-0 py-1 py-sm-2 align-middle text-dark" 
-                               ng-class="{'active': userCtrl.isActive(nav.url)}">
-                                <i class="{{nav.icon}} me-1 me-sm-2 fs-5"></i>
-                                <span class="d-inline small text-nowrap">{{nav.title}}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item w-100 mb-2">
-                            <a ng-click="userCtrl.logout()" 
-                               class="nav-link px-0 py-1 py-sm-2 align-middle text-dark">
-                                <i class="bi bi-box-arrow-left me-1 me-sm-2 fs-5"></i>
-                                <span class="d-inline small text-nowrap">Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </div>
-</div> -->
+

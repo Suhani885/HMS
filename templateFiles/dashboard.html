@@ -1,110 +1,132 @@
 <div ng-controller="dashController as dashCtrl">
-    <div class="container-fluid ">
-        <div class="text-center mb-5">
-            <h2 class="display-4 fw-bold">Dashboard</h2>
+    <div class="container-fluid py-3">
+        <!-- Dashboard Header -->
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold">Healthcare Dashboard</h1>
+                <p class="lead text-muted">Monitor your healthcare system at a glance</p>
+            </div>
         </div>
-        <div class="row g-4 mb-4" ng-if="dashCtrl.stats.role == 'R'">
+
+        <!-- Admin Stats Cards -->
+        <div class="row g-4 mb-5" ng-if="dashCtrl.stats.role == 'R'">
             <div class="col-sm-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <h4 class="card-title">Total Appointments</h4>
-                        <p class="card-text display-4">{{dashCtrl.stats.total_appointment}}</p>
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title mb-3">Total Appointments</h4>
+                        <p class="card-text fw-bold display-4 text-primary mb-0">{{dashCtrl.stats.total_appointment}}</p>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <h4 class="card-title">Registered Doctors</h4>
-                        <p class="card-text display-4">{{dashCtrl.stats.doctor_registered}}</p>
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title mb-3">Registered Doctors</h4>
+                        <p class="card-text display-4 fw-bold text-success mb-0">{{dashCtrl.stats.doctor_registered}}</p>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <h4 class="card-title">Registered Patients</h4>
-                        <p class="card-text display-4">{{dashCtrl.stats.patient_registered}}</p>
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title mb-3">Registered Patients</h4>
+                        <p class="card-text display-4 fw-bold text-info mb-0">{{dashCtrl.stats.patient_registered}}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row g-4 justify-content-center align-items-center" >
-            <div class="col-md-8 " ng-if="dashCtrl.stats.role == 'D'">
-                <div class="card">
+        <!-- Charts Section -->
+        <div class="row g-4 justify-content-center align-items-stretch mb-5">
+            <!-- Doctor's Chart -->
+            <div class="col-lg-8" ng-if="dashCtrl.stats.role == 'D'">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
+                    </div>
+                    <div class="card-footer bg-white text-center border-0 pt-0 pb-4">
+                        <h3 class="fw-bold text-primary mb-0">
+                            <span class="fs-6 text-muted me-2">Total Appointments:</span>
+                            {{dashCtrl.stats.total_appointment}}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Receptionist Charts -->
+            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'R'">
+                <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
                     </div>
                 </div>
-                <div class="text-center mt-3">
-                    <h3 class="display-5 font-weight-bold">Total Appointments: {{dashCtrl.stats.total_appointment}}</h3>
-                </div>
             </div>
             <div class="col-md-6" ng-if="dashCtrl.stats.role == 'R'">
-                <div class="card">
-                    <div class="card-body">
-                        <div id="appointmentChartContainer" style="height: 300px; width: 100%;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6" ng-if="dashCtrl.stats.role == 'R'">
-                <div class="card">
+                <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <div id="registrationChartContainer" style="height: 300px; width: 100%;"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="container-fluid" ng-if="dashCtrl.stats.role == 'P'">
-            <div class="row g-4 mb-4 justify-content-center align-items-center">
-                <!-- <div class="col-sm-8 col-lg-10">
-                    <div class="bg-light">
-                        <div class="card-body text-center">
-                            <h4 class="card-title display-5">Total Appointments Booked : {{dashCtrl.stats.number}}</h4>
-                        </div>
+
+        <!-- Patient Prescription Section -->
+        <div class="row" ng-if="dashCtrl.stats.role == 'P'">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 pb-3">
+                        <h4 class="card-title mb-0">Your Recent Prescription</h4>
+                        <p class="text-muted small mb-0">Medical history and treatment plans</p>
                     </div>
-                </div> -->
-                <div class="col-sm-8 col-lg-10 mt-4">
-                    <div class="card h-100">
-                        <h4 class="card-header text-center p-4">Your Recent Prescription</h4>
-                        <div class="card-body">
-                            <div ng-repeat="prescription in dashCtrl.pres" class="mb-4">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <h5 class="text-primary">Date: {{prescription.date | date:'mediumDate'}}</h5>
+                    <div class="card-body p-4">
+                        <div ng-repeat="prescription in dashCtrl.pres" class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-calendar3 me-2"></i>
+                                    {{prescription.date | date:'mediumDate'}}
+                                </h5>
+                            </div>
+                            <hr class="my-3">
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <div class="p-3 bg-light rounded">
+                                        <h6 class="text-primary mb-2">
+                                            <i class="bi bi-clipboard-pulse mr-2"></i>Diagnosis
+                                        </h6>
+                                        <p class="mb-0">{{prescription.diagnosis}}</p>
                                     </div>
                                 </div>
-                                <hr>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <h6 class="text-secondary">Diagnosis:</h6>
-                                        <p>{{prescription.diagnosis}}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="text-secondary">Instructions:</h6>
-                                        <p>{{prescription.instruction}}</p>
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-light rounded">
+                                        <h6 class="text-primary mb-2">
+                                            <i class="bi bi-info-circle mr-2"></i>Instructions
+                                        </h6>
+                                        <p class="mb-0">{{prescription.instruction}}</p>
                                     </div>
                                 </div>
-                                <h6 class="text-secondary mb-3">Prescribed Medicines:</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Medicine</th>
-                                                <th>Dosage</th>
-                                                <th>Duration</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr ng-repeat="medicine in prescription.medicine">
-                                                <td>{{medicine.medicine}}</td>
-                                                <td>{{medicine.dosage}}</td>
-                                                <td>{{medicine.days}} days</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            </div>
+                            <h6 class="text-primary mb-3">
+                                <i class="bi bi-capsule mr-2"></i>Prescribed Medicines
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Medicine</th>
+                                            <th scope="col">Dosage</th>
+                                            <th scope="col">Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="medicine in prescription.medicine">
+                                            <td>{{medicine.medicine}}</td>
+                                            <td>{{medicine.dosage}}</td>
+                                            <td>
+                                                <span class="badge bg-primary text-white rounded-pill">{{medicine.days}} days</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

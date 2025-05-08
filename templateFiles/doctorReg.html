@@ -53,12 +53,13 @@
                 </select>
               </div>
               <div class="col-sm-5 mb-2">
-                <label for="fee" class="form-label">Consultation Fee (Rs)</label>
-                <input type="number" class="form-control" id="fee" ng-model="docRegCtrl.fee" required autocomplete="on" maxlength="4" >
+                <label for="fee" class="form-label">Consultation Fee (₹)</label>
+                <input type="number" class="form-control" id="fee" ng-model="docRegCtrl.fee" min="100" max="10000" required autocomplete="on" maxlength="4" >
               </div>
               <div class="col-sm-7 mb-2">
                 <label for="image">Image</label>
                 <input type="file" class="form-control" id="image" accept="image/*" onchange="angular.element(this).scope().docRegCtrl.img(this)" required>
+                <small class="text-muted">Upload a professional photo (Max size: 2MB)</small>
               </div>
               <div class="col-sm-6">
                 <label for="password" class="form-label">Password</label>

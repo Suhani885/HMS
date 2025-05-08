@@ -1,11 +1,18 @@
 <div ng-controller="appointController as appointCtrl">
     <div class="container-fluid px-5">
-        <div class="text-center mb-5">
-            <h2 class="display-4 fw-bold">Schedule Appointment</h2>
+        <div class="text-center mb-5 mt-3">
+            <h1 class="h2 fw-bold mb-1">Schedule Your Appointment</h1>
+            <p class="text-muted">Select your preferred date, specialization, and doctor</p>
         </div>
         <div class="row justify-content-center align-items-center">
             <div class="col-12 col-lg-10 col-xl-10">
                 <div class="card shadow-sm">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-calendar-check text-primary fs-4 mr-3"></i>
+                            <h5 class="mb-0 fw-bold">Appointment Details</h5>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <form ng-submit="appointCtrl.appointment()">
                             <div class="row g-3">
@@ -35,8 +42,11 @@
                                     <label for="symptoms" class="form-label">Symptoms (If any)</label>
                                     <input class="form-control" id="symptoms" ng-model="appointCtrl.symptom"></input>
                                 </div>
-                                <div class="col-12 mt-2 mb-2">
-                                    <button type="submit" class="btn btn-primary w-100">Schedule Appointment</button>
+                                <div class="col-12 mt-2">
+                                    <button type="submit" 
+                                            class="btn btn-primary btn-lg w-100 py-2 d-flex align-items-center justify-content-center">
+                                        Schedule Appointment
+                                    </button>
                                 </div>
                             </div>
                         </form>
