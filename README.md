@@ -1,4 +1,4 @@
-# 🏥 Hospital Management System (HMS)
+# 🏥 Hospital Management System (VitalCure)
 
 ## Streamlining healthcare, one click at a time
 
