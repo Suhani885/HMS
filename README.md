@@ -1,4 +1,4 @@
-# 🏥 Hospital Management System (VitalCure)
+# 🏥 VitalCure - Hospital Management System
 
 ## Streamlining healthcare, one click at a time
 
@@ -7,19 +7,19 @@ A comprehensive web-based Hospital Management System built with AngularJS and Bo
 
 ## ✨ Features
 
-- 👨‍⚕️ **For Doctors**:
+- **For Doctors**:
   - Manage personal schedule and availability
   - Create and issue digital prescriptions
   - View patient medical history and records
   - Track appointments and patient flow
   
-- 🧑‍⚕️ **For Patients**:
+- **For Patients**:
   - Book appointments by specialty and date
   - View and cancel existing appointments
   - Access personal medical records
   - View prescription history and medication details
   
-- 👩‍💼 **For Receptionist**:
+- **For Receptionist**:
   - Records and statistics of new patients and doctors
   - Manage digital medical records
   - Monitor hospital operations analytics with complete system control
