@@ -1,5 +1,5 @@
 const app = angular.module("app", ["ui.router", "ui.bootstrap"]);
-var baseUrl = "https://192.168.42.211:8000";
+var baseUrl = "https://vitalcure-i8gf.onrender.com";
 
 app.service("api_request", [
   "$http",
