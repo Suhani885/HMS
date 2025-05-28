@@ -4,7 +4,7 @@
       <div class="card shadow border-0">
         <div class="card-body p-3">
           <div class="text-center d-flex flex-column justify-content-center align-items-center">
-            <img src="images/vitalLogo.jpeg" style="max-width: 300px;" alt="logo" class="img-fluid">
+            <img src="assets/images/vitalLogo.jpeg" style="max-width: 300px;" alt="logo" class="img-fluid">
           </div>
           <form ng-submit="pRegCtrl.Register()" id="form" enctype="multipart/form-data">
             <div class="row g-3">
@@ -24,26 +24,26 @@
                 <label for="phone" class="form-label">Phone Number</label>
                 <input type="text" class="form-control" id="phone" ng-model="pRegCtrl.number" autocomplete="on" required pattern="[6 7 8 9][0-9]{9}">
               </div>
-              <div class="col-sm-4 mb-2">
+              <div class="col-sm-7 mb-2">
                 <label for="dob" class="form-label">Date of Birth</label>
                 <input type="date" class="form-control" required autocomplete="on" ng-model="pRegCtrl.dob" id="dob">
               </div>
-              <div class="col-sm-4 mb-2">
+              <!-- <div class="col-sm-4 mb-2">
                 <label for="age" class="form-label">Age</label>
                 <input type="number" maxlength="3" required autocomplete="on" ng-model="pRegCtrl.age" class="form-control" id="age" min="0">
-              </div>
-              <div class="col-sm-4 mb-2">
+              </div> -->
+              <div class="col-sm-5 mb-2">
                 <label for="bloodGroup" class="form-label">Blood Group</label>
                 <select class="form-control" required ng-model="pRegCtrl.bloodgrp" id="bloodGroup">
                   <option value="" disabled selected>Select...</option>
                   <option ng-repeat="bg in pRegCtrl.bgs" ng-value="bg.blood_grp">{{bg.blood_grp}}</option>
                 </select>
               </div>
-              <div class="col-8 mb-2">
+              <div class="col-7 mb-2">
                 <label for="address" class="form-label ">Address</label>
                 <input type="text" class="form-control" ng-model="pRegCtrl.address" id="address" pattern="[A-Z1-9a-z]{1,5}[A-Za-z]{1,}[A-Z1-9a-z]{1,50}" required placeholder="Enter your address">
               </div>
-              <div class="col-sm-4 mb-2">
+              <div class="col-sm-5 mb-2">
                 <label for="image" class="form-label ">Image</label>
                 <input type="file" class="form-control" id="image" accept="image/*" onchange="angular.element(this).scope().pRegCtrl.img(this)" required>
               </div>

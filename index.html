@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VitalCure</title>
 
+  <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -29,8 +31,43 @@
 
   <script src="app.js"></script>
 
+  <script src="/jsFiles/routes.js"></script>
+
+  <script src="/jsFiles/authController.js"></script>
+
+  <script src="/jsFiles/mainController.js"></script>
+
 </head>
-<body>
+<body ng-controller="LoaderController as loaderCtrl">
+  <div
+  class="spinner-backdrop"
+  ng-show="loaderCtrl.loader.isLoading"
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.849);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  "
+>
+  <div
+    class="spinner-border text-primary"
+    role="status"
+    style="
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.4em;
+      box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+      background-color: transparent;
+    "
+  >
+  </div>
+</div>
   <div ui-view></div>
 </body>
 </html>
