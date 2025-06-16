@@ -49,6 +49,6 @@ A comprehensive web-based Hospital Management System built with AngularJS and Bo
    ```bash
    npm install
    ```
-4. Open script.js in a live server or browser with AngularJS support.
+4. Open app.js in a live server or browser with AngularJS support.
 
 
