@@ -114,6 +114,27 @@ app.controller("allController", [
   },
 ]);
 
+app.controller("docController", [
+  "$http",
+  "api_request",
+  function ($http, api_request) {
+    var docCtrl = this;
+    docCtrl.details = [];
+
+    docCtrl.getImageUrl = function (imagePath) {
+      return baseUrl + "/media/" + imagePath;
+    };
+
+    docCtrl.fetchDoctors = function () {
+      api_request.get_withdata("vitalcure/list_doctors/", function (response) {
+        docCtrl.details = response.details;
+      });
+    };
+
+    docCtrl.fetchDoctors();
+  },
+]);
+
 app.controller("dashController", [
   "$http",
   "api_request",
