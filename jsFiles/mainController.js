@@ -10,9 +10,25 @@ app.controller("LandingController", [
     };
 
     landingCtrl.fetchDoctors = function () {
-      api_request.get_withdata("vitalcure/list_doctors/", function (response) {
-        landingCtrl.details = response.details;
-      });
+      var req = {
+        method: "GET",
+        url: `${baseUrl}/vitalcure/list_doctors/`,
+        withCredentials: true,
+      };
+
+      $http(req).then(
+        function (response) {
+          landingCtrl.details = response.data.details;
+        },
+        function (err) {
+          console.log("Error:", err);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: err.data.error || "Failed to load doctors. Please try again!",
+          });
+        }
+      );
     };
 
     landingCtrl.fetchDoctors();
